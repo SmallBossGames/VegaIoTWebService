@@ -23,7 +23,7 @@ namespace VegaIoTApi.AppServices
 
         public async Task<TResponse> WebSocketRequest<TResponse, TRequest>(TRequest request, int reciveBufferSize = 2048)
         {
-            var socket = new ClientWebSocket();
+            using var socket = new ClientWebSocket();
             await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
 
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
