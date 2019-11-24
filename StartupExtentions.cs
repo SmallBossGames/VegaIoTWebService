@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using VegaIoTApi.AppServices;
 using VegaIoTApi.Data;
 
 namespace VegaIoTApi
@@ -19,5 +21,24 @@ namespace VegaIoTApi
                 
             return options;
         }
+
+        public static IServiceCollection AddHostedServices(this IServiceCollection services)
+        {
+            return services;
+        }
+
+        public static IServiceCollection AddAppServices(this IServiceCollection services)
+        {
+            
+            return services;
+        }
+
+        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        {
+            return services;
+        }
+
+        public static string GetVegaConnectionUrl(this IConfiguration configuration, string key)
+            => configuration.GetSection("VegaConnectionUrls").GetValue<string>(key);
     }
 }

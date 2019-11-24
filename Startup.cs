@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using VegaIoTApi.AppServices;
 using VegaIoTApi.Data;
 
 namespace VegaIoTApi
@@ -34,6 +35,16 @@ namespace VegaIoTApi
                 (options => options.UseNpgsql("Server=db;Username=sb;Password=qwertyuiop;Database=my_db;"));*/
 
             services.AddControllers();
+
+            services.AddSingleton<IVegaApiCommunicator, VegaApiCommunicator> (provider => 
+            {
+                var uri = new Uri(Configuration.GetVegaConnectionUrl("DefaultConnection"));
+                return new VegaApiCommunicator(uri);
+            });
+
+            services.AddAppServices();
+            services.AddRepositories();
+            services.AddHostedServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +63,8 @@ namespace VegaIoTApi
             {
                 endpoints.MapControllers();
             });
+
+            app.UseWebSockets();
         }
     }
 }
