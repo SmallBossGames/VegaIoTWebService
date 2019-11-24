@@ -27,20 +27,11 @@ namespace VegaIoTApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var builder = new PostgreSqlConnectionStringBuilder(Configuration["DATABASE_URL"])
-            {
-                Pooling = true,
-                TrustServerCertificate = true,
-                SslMode = SslMode.Require
-            };
-
             services.AddDbContext<VegaApiDBContext>
-                (options => options.UseNpgsql(builder.ConnectionString));
+                (options => options.UseHerokuPostgres(Configuration["DATABASE_URL"]));
 
             /*services.AddDbContext<VegaApiDBContext>
                 (options => options.UseNpgsql("Server=db;Username=sb;Password=qwertyuiop;Database=my_db;"));*/
-
-            
 
             services.AddControllers();
         }

@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using VegaIoTApi.Migrations;
 using VegaIoTApi.Data;
+using Microsoft.AspNetCore;
 
 namespace VegaIoTApi
 {
@@ -28,13 +29,9 @@ namespace VegaIoTApi
             host.Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    var port = Environment.GetEnvironmentVariable("PORT");
-
-                    webBuilder.UseStartup<Startup>().UseUrls("http://*:"+port);
-                });
+        public static IWebHostBuilder CreateHostBuilder(string[] args) =>
+             WebHost.CreateDefaultBuilder(args)
+                    .UseUrls("http://*:" + Environment.GetEnvironmentVariable("PORT"))
+                    .UseStartup<Startup>();
     }
 }
