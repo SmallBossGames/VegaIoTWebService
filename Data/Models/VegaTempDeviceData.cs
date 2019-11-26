@@ -7,7 +7,6 @@ namespace VegaIoTWebService.Data.Models
     {
         public VegaTempDeviceData()
         {
-            Id = null!;
             Device = null!;
             DeviceId = null!;
         }
@@ -25,7 +24,7 @@ namespace VegaIoTWebService.Data.Models
             HighLimit = highLimit;
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         public VegaTempDevice Device { get; set; }
 

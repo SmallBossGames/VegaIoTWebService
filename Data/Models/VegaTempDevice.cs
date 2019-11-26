@@ -6,7 +6,6 @@ namespace VegaIoTWebService.Data.Models
     {
         public VegaTempDevice()
         {
-            Id = null!;
             Eui = null!;
             Name = null!;
         }
@@ -18,7 +17,7 @@ namespace VegaIoTWebService.Data.Models
             Name = name;
         }
 
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public string Eui { get; set; }
         public string Name { get; set; }
     }
