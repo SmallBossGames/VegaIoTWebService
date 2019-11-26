@@ -19,18 +19,18 @@ namespace VegaIoTApi
         {
             var host = CreateHostBuilder(args).Build();
 
-            //using (var scope = host.Services.CreateScope())
-            //{
-            //    var services = scope.ServiceProvider;
-            //    var context = services.GetRequiredService<VegaApiDBContext>();
-            //    context.Database.Migrate();
-            //}
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<VegaApiDBContext>();
+                context.Database.Migrate();
+            }
             host.Run();
         }
 
         public static IWebHostBuilder CreateHostBuilder(string[] args) =>
              WebHost.CreateDefaultBuilder(args)
-                    //.UseUrls("http://*:" + Environment.GetEnvironmentVariable("PORT"))
+                    .UseUrls("http://*:" + Environment.GetEnvironmentVariable("PORT"))
                     .UseStartup<Startup>();
     }
 }
