@@ -21,8 +21,10 @@ namespace VegaIoTApi.Migrations
 
             modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaTempDevice", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<string>("Eui")
                         .IsRequired()
@@ -41,15 +43,16 @@ namespace VegaIoTApi.Migrations
 
             modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaTempDeviceData", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<short>("BatteryLevel")
                         .HasColumnType("smallint");
 
-                    b.Property<string>("DeviceId")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<long>("DeviceId")
+                        .HasColumnType("bigint");
 
                     b.Property<short>("HighLimit")
                         .HasColumnType("smallint");

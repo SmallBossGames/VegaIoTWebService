@@ -7,29 +7,14 @@ namespace VegaIoTWebService.Data.Models
     {
         public VegaTempDeviceData()
         {
-            Id = null!;
             Device = null!;
-            DeviceId = null!;
         }
 
-        public VegaTempDeviceData(string id, VegaTempDevice device, string deviceId, short batteryLevel, bool pushTheLimit, DateTime uptime, short temperature, short lowLimit, short highLimit)
-        {
-            Id = id;
-            Device = device;
-            DeviceId = deviceId;
-            BatteryLevel = batteryLevel;
-            PushTheLimit = pushTheLimit;
-            Uptime = uptime;
-            Temperature = temperature;
-            LowLimit = lowLimit;
-            HighLimit = highLimit;
-        }
-
-        public string Id { get; set; }
+        public long Id { get; set; }
 
         public VegaTempDevice Device { get; set; }
 
-        public string DeviceId { get; set; }
+        public long DeviceId { get; set; }
 
         public short BatteryLevel { get; set; }
 

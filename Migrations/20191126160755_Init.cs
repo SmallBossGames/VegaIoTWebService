@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace VegaIoTApi.Migrations
 {
-    public partial class TemperatureDevices : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -11,7 +12,8 @@ namespace VegaIoTApi.Migrations
                 name: "TempDevices",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Eui = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false)
                 },
@@ -24,8 +26,9 @@ namespace VegaIoTApi.Migrations
                 name: "TempDeviceData",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
-                    DeviceId = table.Column<string>(nullable: false),
+                    Id = table.Column<long>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DeviceId = table.Column<long>(nullable: false),
                     BatteryLevel = table.Column<short>(nullable: false),
                     PushTheLimit = table.Column<bool>(nullable: false),
                     Uptime = table.Column<DateTime>(nullable: false),
