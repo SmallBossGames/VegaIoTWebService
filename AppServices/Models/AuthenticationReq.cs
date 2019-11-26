@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace VegaIoTApi.AppServices.Models
 {
-    public class AuthenticationRequestModel
+    public class AuthenticationReq
     {
         [JsonPropertyName("cmd")]
         public string Cmd => "auth_req";

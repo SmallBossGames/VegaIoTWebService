@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace VegaIoTApi.AppServices.Models
 {
-    public class AuthenticationResponseModel
+    public class AuthenticationResp
     {
         [JsonPropertyName("cmd")]
         public string Cmd { get; set; } = string.Empty;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -25,16 +26,16 @@ namespace VegaIoTApi.Controllers.Version1.Vega
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<DeviceTDModel>>> GetAsync(string id)
         {
-            var request = new DeviceDataRequestModel()
+            var request = new DeviceDataReq()
             {
                 DevEui = id,
-                Select = new DeviceDataRequestModel.SelectModel()
+                Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
                 }
             };
 
-            var result = await _communiactor.GetDeviceDataAsync(request);
+            var result = await _communiactor.GetDeviceDataAsync(request, CancellationToken.None);
 
             var list = new List<DeviceTDModel>();
 
@@ -46,7 +47,6 @@ namespace VegaIoTApi.Controllers.Version1.Vega
                     var temperature = processed.Temperature / 10.0;
                     list.Add(processed);
                 }
-
             }
 
             return Ok(list);

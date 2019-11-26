@@ -10,51 +10,40 @@ namespace VegaIoTApi.AppServices
     public class VegaApiCommunicator : IVegaApiCommunicator
     {
         private readonly Uri _webSocketUri;
-        private readonly ClientWebSocket socket;
 
-        public VegaApiCommunicator(Uri webSocketUri) 
+        public VegaApiCommunicator(Uri webSocketUri)
         {
             _webSocketUri = webSocketUri;
-            socket = new ClientWebSocket();
         }
-        public async Task<AuthenticationResponseModel> AuthenticateAsync(AuthenticationRequestModel request)
+
+        public VegaRequestBuilder BuildRequest() => new VegaRequestBuilder(_webSocketUri);
+
+        public async Task<AuthenticationResp> AuthenticateAsync
+            (AuthenticationReq request, CancellationToken cancellationToken)
         {
-            if(socket.State != WebSocketState.Open)
-                await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
-
-            var semaphore = new SemaphoreSlim(1,1);
-
-            return await WebSocketRequest<AuthenticationResponseModel, AuthenticationRequestModel>(request, socket, semaphore);
+            using var socket = new ClientWebSocket();
+            await socket.ConnectAsync(_webSocketUri, cancellationToken);
+            return await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
         }
 
-        public async Task<DeviceDataResponceModel> GetDeviceDataAsync(DeviceDataRequestModel request)
+        public async Task<DeviceDataResp> GetDeviceDataAsync
+            (DeviceDataReq request, CancellationToken cancellationToken)
         {
-            if(socket.State != WebSocketState.Open)
-                await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
-
-            var semaphore = new SemaphoreSlim(1,1);
-
-            return await WebSocketRequest<DeviceDataResponceModel, DeviceDataRequestModel>(request, socket, semaphore, 4096);
+            using var socket = new ClientWebSocket();
+            await socket.ConnectAsync(_webSocketUri, cancellationToken);
+            return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000);
         }
 
-        private async Task<TResponse> WebSocketRequest<TResponse, TRequest>
-            (TRequest request, WebSocket socket, SemaphoreSlim semaphore, int reciveBufferSize = 2048)
+        private async Task<TResponse> WebSocketRequest<TRequest, TResponse>
+            (TRequest request, WebSocket socket, int reciveBufferSize = 2048)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
             var reciveBytes = new byte[reciveBufferSize];
 
-            WebSocketReceiveResult receiveResult;
-            await semaphore.WaitAsync();
-            try
-            {
-                await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
-                receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
-            }
-            finally
-            {
-                semaphore.Release();
-            }
-            
+            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
+            var receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
+
+
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
     }

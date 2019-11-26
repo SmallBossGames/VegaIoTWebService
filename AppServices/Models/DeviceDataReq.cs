@@ -2,7 +2,7 @@
 
 namespace VegaIoTApi.AppServices.Models
 {
-    public class DeviceDataRequestModel
+    public class DeviceDataReq
     {
         public class SelectModel
         {

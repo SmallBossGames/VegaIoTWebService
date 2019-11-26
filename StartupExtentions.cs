@@ -1,8 +1,10 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VegaIoTApi.AppServices;
 using VegaIoTApi.Data;
+using VegaIoTWebService.HostedServices;
 
 namespace VegaIoTApi
 {
@@ -18,18 +20,19 @@ namespace VegaIoTApi
             };
 
             options.UseNpgsql(builder.ConnectionString);
-                
+
             return options;
         }
 
         public static IServiceCollection AddHostedServices(this IServiceCollection services)
         {
+            //services.AddHostedService<VegaDeviceDbSync>();
             return services;
         }
 
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
-            
+
             return services;
         }
 
@@ -38,7 +41,30 @@ namespace VegaIoTApi
             return services;
         }
 
-        public static string GetVegaConnectionUrl(this IConfiguration configuration, string key)
-            => configuration.GetSection("VegaConnectionUrls").GetValue<string>(key);
+        public static VegaConnectionParameters GetVegaConnectionParameters
+            (this IConfiguration configuration, string key)
+        {
+            var section = configuration.GetSection("VegaConnection").GetSection(key);
+            return new VegaConnectionParameters
+            ( 
+                new Uri(section.GetValue<string>("URL")),
+                section.GetValue<string>("Login"),
+                section.GetValue<string>("Password")
+            );
+        }
+    }
+
+    public class VegaConnectionParameters
+    {
+        public VegaConnectionParameters(Uri URL, string login, string password)
+        {
+            this.URL = URL;
+            Login = login;
+            Password = password;
+        }
+
+        public Uri URL { get; }
+        public string Login { get; }
+        public string Password { get; }
     }
 }

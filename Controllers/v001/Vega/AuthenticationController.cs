@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,19 +18,18 @@ namespace VegaIoTApi.Controllers.Version1.Vega
     public class AuthenticationController : ControllerBase
     {
         private readonly ILogger<AuthenticationController> _logger;
-        private readonly IVegaApiCommunicator _communiactor;
+        private readonly IVegaApiCommunicator _communicator;
 
         public AuthenticationController(ILogger<AuthenticationController> logger, IVegaApiCommunicator communicator)
         {
-            _communiactor = communicator;
+            _communicator = communicator;
             _logger = logger;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]AuthenticationRequestModel requestModel)
+        public async Task<IActionResult> Post([FromBody]AuthenticationReq requestModel)
         {
-            var result = await _communiactor.AuthenticateAsync(requestModel);
-            return Ok(result);
+            return Ok(await _communicator.AuthenticateAsync(requestModel, CancellationToken.None));
         }
     }
 }

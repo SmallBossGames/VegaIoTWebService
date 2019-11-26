@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace VegaIoTApi.AppServices.Models
 {
-    public class DeviceDataResponceModel
+    public class DeviceDataResp
     {
         public class DataListModel
         {
