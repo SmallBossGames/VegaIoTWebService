@@ -27,6 +27,16 @@ namespace VegaIoTApi.AppServices
             return await WebSocketRequest<AuthenticationResponseModel, AuthenticationRequestModel>(request, socket, semaphore);
         }
 
+        public async Task<DeviceDataResponceModel> GetDeviceDataAsync(DeviceDataRequestModel request)
+        {
+            if(socket.State != WebSocketState.Open)
+                await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
+
+            var semaphore = new SemaphoreSlim(1,1);
+
+            return await WebSocketRequest<DeviceDataResponceModel, DeviceDataRequestModel>(request, socket, semaphore, 4096);
+        }
+
         private async Task<TResponse> WebSocketRequest<TResponse, TRequest>
             (TRequest request, WebSocket socket, SemaphoreSlim semaphore, int reciveBufferSize = 2048)
         {

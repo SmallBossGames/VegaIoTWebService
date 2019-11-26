@@ -6,5 +6,6 @@ namespace VegaIoTApi.AppServices
     public interface IVegaApiCommunicator
     {
         public Task<AuthenticationResponseModel> AuthenticateAsync(AuthenticationRequestModel request);
+        public Task<DeviceDataResponceModel> GetDeviceDataAsync(DeviceDataRequestModel request);
     }
 }
