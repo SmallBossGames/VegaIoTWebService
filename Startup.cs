@@ -37,10 +37,10 @@ namespace VegaIoTApi
             services.AddControllers();
 
             services.AddSingleton<IVegaApiCommunicator, VegaApiCommunicator>(provider =>
-            {
+           {
                var connectionParams = Configuration.GetVegaConnectionParameters("DefaultConnection");
                return new VegaApiCommunicator(connectionParams.URL);
-            });
+           });
 
             services.AddAppServices();
             services.AddRepositories();
