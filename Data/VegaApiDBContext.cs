@@ -14,8 +14,8 @@ namespace VegaIoTApi.Data
         {
         }
 
-        DbSet<VegaTempDevice> TempDevices { get; set; } = null!;
-        DbSet<VegaTempDeviceData> TempDeviceData { get; set; } = null!;
+        public DbSet<VegaTempDevice> TempDevices { get; set; } = null!;
+        public DbSet<VegaTempDeviceData> TempDeviceData { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
