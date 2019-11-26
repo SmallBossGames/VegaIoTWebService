@@ -31,8 +31,8 @@ namespace VegaIoTApi
             services.AddDbContext<VegaApiDBContext>
                 (options => options.UseHerokuPostgres(Configuration["DATABASE_URL"]));
 
-            /*services.AddDbContext<VegaApiDBContext>
-                (options => options.UseNpgsql("Server=db;Username=sb;Password=qwertyuiop;Database=my_db;"));*/
+            //services.AddDbContext<VegaApiDBContext>
+            //    (options => options.UseNpgsql("Server=db;Username=sb;Password=qwertyuiop;Database=my_db;"));
 
             services.AddControllers();
 

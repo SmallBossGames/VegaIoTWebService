@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Data
 {
@@ -6,10 +7,20 @@ namespace VegaIoTApi.Data
     {
         public VegaApiDBContext(DbContextOptions<VegaApiDBContext> options)
             : base(options)
-        { 
+        {
         }
 
-        public VegaApiDBContext() { }
+        protected VegaApiDBContext()
+        {
+        }
 
+        DbSet<VegaTempDevice> TempDevices { get; set; } = null!;
+        DbSet<VegaTempDeviceData> TempDeviceData { get; set; } = null!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<VegaTempDevice>()
+                .HasIndex(d => d.Eui);
+        }
     }
 }
