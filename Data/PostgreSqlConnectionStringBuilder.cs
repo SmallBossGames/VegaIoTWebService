@@ -12,12 +12,12 @@ namespace VegaIoTApi.Data
 
 public class PostgreSqlConnectionStringBuilder : DbConnectionStringBuilder
 {
-    private string _database;
-    private string _host;
-    private string _password;
+    private string _database = string.Empty;
+    private string _host= string.Empty;
+    private string _password= string.Empty;
     private bool _pooling;
     private int _port;
-    private string _username;
+    private string _username = string.Empty;
     private bool _trustServerCertificate;
     private SslMode _sslMode;
 
@@ -164,15 +164,18 @@ public class PostgreSqlConnectionStringBuilder : DbConnectionStringBuilder
 
     private void ParseUri(string uriString)
     {
-        var isUri = Uri.TryCreate(uriString, UriKind.Absolute, out var uri);
-
-        if (!isUri) throw new FormatException(string.Format("'{0}' is not a valid URI.", uriString));
-
-        Host = uri.Host;
-        Port = uri.Port;
-        Database = uri.LocalPath.Substring(1);
-        Username = uri.UserInfo.Split(':')[0];
-        Password = uri.UserInfo.Split(':')[1];
+        if(Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+        {
+            Host = uri.Host;
+            Port = uri.Port;
+            Database = uri.LocalPath.Substring(1);
+            Username = uri.UserInfo.Split(':')[0];
+            Password = uri.UserInfo.Split(':')[1];
+        }
+        else
+        {
+            throw new FormatException(string.Format("'{0}' is not a valid URI.", uriString));
+        }
     }
 }
 }

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
-using VegaIoTWebService.AppServices.Models;
+using VegaIoTApi.AppServices.Models;
 
-namespace VegaIoTApi.AppServices 
+namespace VegaIoTApi.AppServices
 {
     public interface IVegaApiCommunicator
     {

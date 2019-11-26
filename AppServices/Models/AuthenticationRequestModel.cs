@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace VegaIoTWebService.AppServices.Models
+namespace VegaIoTApi.AppServices.Models
 {
     public class AuthenticationRequestModel
     {
@@ -8,9 +8,9 @@ namespace VegaIoTWebService.AppServices.Models
         public string Cmd => "auth_req";
 
         [JsonPropertyName("login")]
-        public string Login { get; set; }
+        public string Login { get; set; } = string.Empty;
 
         [JsonPropertyName("password")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

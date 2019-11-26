@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 using VegaIoTApi.AppServices;
-using VegaIoTWebService.AppServices.Models;
+using VegaIoTApi.AppServices.Models;
 
 namespace VegaIoTApi.Controllers.Version1.Vega
 {

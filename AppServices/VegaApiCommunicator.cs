@@ -3,38 +3,49 @@ using System.Net.WebSockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using VegaIoTWebService.AppServices.Models;
+using VegaIoTApi.AppServices.Models;
 
-namespace VegaIoTApi.AppServices 
+namespace VegaIoTApi.AppServices
 {
     public class VegaApiCommunicator : IVegaApiCommunicator
     {
         private readonly Uri _webSocketUri;
-        public VegaApiCommunicator() {}
+        private readonly ClientWebSocket socket;
 
         public VegaApiCommunicator(Uri webSocketUri) 
         {
             _webSocketUri = webSocketUri;
+            socket = new ClientWebSocket();
         }
-        public Task<AuthenticationResponseModel> AuthenticateAsync(AuthenticationRequestModel request)
+        public async Task<AuthenticationResponseModel> AuthenticateAsync(AuthenticationRequestModel request)
         {
-            return WebSocketRequest<AuthenticationResponseModel, AuthenticationRequestModel>(request);
+            if(socket.State != WebSocketState.Open)
+                await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
+
+            var semaphore = new SemaphoreSlim(1,1);
+
+            return await WebSocketRequest<AuthenticationResponseModel, AuthenticationRequestModel>(request, socket, semaphore);
         }
 
-        public async Task<TResponse> WebSocketRequest<TResponse, TRequest>(TRequest request, int reciveBufferSize = 2048)
+        private async Task<TResponse> WebSocketRequest<TResponse, TRequest>
+            (TRequest request, WebSocket socket, SemaphoreSlim semaphore, int reciveBufferSize = 2048)
         {
-            using var socket = new ClientWebSocket();
-            await socket.ConnectAsync(_webSocketUri, CancellationToken.None);
-
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
-
-            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
-
             var reciveBytes = new byte[reciveBufferSize];
 
-            var reciveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
-
-            return JsonSerializer.Deserialize<TResponse>(reciveBytes[..reciveResult.Count]);
+            WebSocketReceiveResult receiveResult;
+            await semaphore.WaitAsync();
+            try
+            {
+                await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
+                receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+            
+            return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
     }
 }
