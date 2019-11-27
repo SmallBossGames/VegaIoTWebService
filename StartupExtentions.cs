@@ -34,6 +34,7 @@ namespace VegaIoTApi
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
             services.AddScoped<ITemperatureDeviceRepository, TemperatureDeviceRepository>();
+            services.AddScoped<ITemperatureDeviceDataRepository, TemperatureDeviceDataRepository>();
             return services;
         }
 

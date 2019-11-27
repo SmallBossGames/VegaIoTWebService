@@ -101,7 +101,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
 
         // DELETE: api/VegaTempDevices/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VegaTempDevice?>> DeleteVegaTempDevice(string id)
+        public async Task<ActionResult<VegaTempDevice?>> DeleteVegaTempDevice(long id)
         {
             var result = await _repository.DeleteVegaTempDevice(id);
             if (result == null)

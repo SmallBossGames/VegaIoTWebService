@@ -7,7 +7,7 @@ namespace VegaIoTApi.Repositories
     public interface ITemperatureDeviceRepository
     {
         Task<VegaTempDevice> AddTempDeviceAsync(VegaTempDevice tempDevice);
-        Task<VegaTempDevice?> DeleteVegaTempDevice(string id);
+        Task<VegaTempDevice?> DeleteVegaTempDevice(long id);
         Task EditTempDeviceAsync(VegaTempDevice vegaTempDevice);
         Task<VegaTempDevice?> GetTempDeviceAsync(long id);
         Task<List<VegaTempDevice>> GetTempDevicesAsync();

@@ -41,7 +41,7 @@ namespace VegaIoTApi.Repositories
             return tempDevice;
         }
 
-        public async Task<VegaTempDevice?> DeleteVegaTempDevice(string id)
+        public async Task<VegaTempDevice?> DeleteVegaTempDevice(long id)
         {
             var vegaTempDevice = await _context.TempDevices.FindAsync(id);
 
