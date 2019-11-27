@@ -11,7 +11,7 @@ using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Controllers.v001.Temperature
 {
-    [Route("api/v001/temperature/[controller]")]
+    [Route("api/v001/temperature/[controller]/[action]")]
     [ApiController]
     public class VegaTempDeviceDatasController : ControllerBase
     {
@@ -23,13 +23,13 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         }
 
         // GET: api/VegaTempDeviceDatas
-        [HttpGet("/datas")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync()
         {
             return await _repository.GetTempDeviceDatasAsync();
         }
 
-        [HttpGet("/datas")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync(long deviceId)
         {
             var result = await _repository.GetTempDeviceDatasAsync(deviceId);
