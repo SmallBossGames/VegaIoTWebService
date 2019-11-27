@@ -7,7 +7,6 @@ namespace VegaIoTWebService.Data.Models
     {
         public long Id { get; set; }
 
-        [Required]
         public VegaTempDevice? Device { get; set; }
 
         public long DeviceId { get; set; }
