@@ -13,5 +13,6 @@ namespace VegaIoTApi.Repositories
         Task<List<VegaTempDeviceData>?> GetTempDeviceDatasAsync(long deviceId);
         Task<VegaTempDeviceData?> GetTempDeviceDataAsync(long id);
         bool TempDeviceDataExists(long id);
+        bool TempDeviceExists(long deviceId);
     }
 }

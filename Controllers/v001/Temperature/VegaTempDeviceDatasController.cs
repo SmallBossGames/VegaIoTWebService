@@ -33,6 +33,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync(long deviceId)
         {
             var result = await _repository.GetTempDeviceDatasAsync(deviceId);
+            
             if(result == null)
             {
                 return NotFound();
@@ -61,7 +62,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVegaTempDeviceData(long id, VegaTempDeviceData tempDeviceData)
         {
-            if (id != tempDeviceData.Id)
+            if (id != tempDeviceData.Id || !_repository.TempDeviceExists(tempDeviceData.DeviceId))
             {
                 return BadRequest();
             }
