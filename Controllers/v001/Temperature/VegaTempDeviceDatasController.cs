@@ -91,11 +91,16 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<VegaTempDeviceData>> PostVegaTempDeviceData(VegaTempDeviceData vegaTempDeviceData)
+        public async Task<ActionResult<VegaTempDeviceData>> PostVegaTempDeviceData(VegaTempDeviceData tempDeviceData)
         {
-            await _repository.AddTempDeviceDataAsync(vegaTempDeviceData);
+            if (!_repository.TempDeviceExists(tempDeviceData.DeviceId))
+            {
+                return BadRequest();
+            }
 
-            return CreatedAtAction("GetTempDeviceData", new { id = vegaTempDeviceData.Id }, vegaTempDeviceData);
+            await _repository.AddTempDeviceDataAsync(tempDeviceData);
+
+            return CreatedAtAction("GetTempDeviceData", new { id = tempDeviceData.Id }, tempDeviceData);
         }
 
         // DELETE: api/VegaTempDeviceDatas/5
