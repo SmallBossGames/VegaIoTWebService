@@ -5,14 +5,10 @@ namespace VegaIoTWebService.Data.Models
 {
     public class VegaTempDeviceData
     {
-        public VegaTempDeviceData()
-        {
-            Device = null!;
-        }
-
         public long Id { get; set; }
 
-        public VegaTempDevice Device { get; set; }
+        [Required]
+        public VegaTempDevice? Device { get; set; }
 
         public long DeviceId { get; set; }
 
