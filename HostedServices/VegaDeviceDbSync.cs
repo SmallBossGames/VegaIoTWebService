@@ -40,11 +40,14 @@ namespace VegaIoTWebService.HostedServices
         private async void UpdateDatabase(object? state)
         {
             var devices = await deviceRepository.GetTempDevicesAsync();
+            Console.WriteLine($"{devices.Count}");
 
             foreach (var item in devices)
             {
                 var lastUpdateTime = await dataRepository.GetLastUpdateTime(item.Id);
-                _logger.LogDebug("Last update time is lastUpdateTime");
+
+                Console.WriteLine($"{lastUpdateTime.ToString()}");
+
                 var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync(item.Eui, lastUpdateTime);
 
                 await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData);
