@@ -50,8 +50,6 @@ namespace VegaIoTWebService.HostedServices
 
                 var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync(item.Eui, lastUpdateTime);
 
-                Console.WriteLine($"We load {vegaServerLoadedData.Count}.");
-
                 await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData);
             }
         }
