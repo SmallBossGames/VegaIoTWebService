@@ -50,7 +50,7 @@ namespace VegaIoTApi.AppServices
             await socket.ConnectAsync(_webSocketUri, cancellationToken);
 
             var authRequest = await AuthenticateAsync(socket, cancellationToken);
-            
+
             if (authRequest.Status != true)
                 throw new InvalidOperationException();
 
@@ -99,7 +99,15 @@ namespace VegaIoTApi.AppServices
             return list;
         }
 
-        private static int GetUnixTime(DateTime time) => 
-            (int)(time - new DateTime(1970, 1, 1)).TotalSeconds;
+        private static int GetUnixTime(DateTime time)
+        {
+            DateTime unixAge = new DateTime(1970, 1, 1);
+            
+            if (time < unixAge)
+                return 0;
+
+            return (int)(time - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+           
     }
 }
