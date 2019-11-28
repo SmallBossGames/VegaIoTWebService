@@ -86,16 +86,11 @@ namespace VegaIoTApi.AppServices
 
             var list = new LinkedList<VegaTempDeviceData>();
 
-            Console.WriteLine($"Loaded count: {result.TotalNum}");
-
             foreach (var a in result.DataList)
             {
-                Console.WriteLine($"Current package: {a.Data}, type: {a.Type}");
-
                 if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = VegaTempDeviceData.Parse(a.Data);
-                    Console.WriteLine($"Temperature: {processed.Temperature}");
                     var temperature = processed.Temperature / 10.0;
                     list.AddLast(processed);
                 }
