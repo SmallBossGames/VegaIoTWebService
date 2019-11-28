@@ -49,6 +49,20 @@ namespace VegaIoTApi.Repositories
             return tempDeviceData;
         }
 
+        public async Task AddTempDeviceDataAsync(IEnumerable<VegaTempDeviceData> tempDeviceData)
+        {
+            await _context.TempDeviceData.AddRangeAsync(tempDeviceData);
+            await _context.SaveChangesAsync();
+        }
+
+        public Task<DateTime> GetLastUpdateTime(long deviceId)
+        {
+            return (from dd in _context.TempDeviceData
+                    where dd.DeviceId == deviceId
+                    orderby dd.Uptime
+                    select dd.Uptime).FirstOrDefaultAsync();
+        }
+
         public async Task<VegaTempDeviceData?> DeleteVegaTempDeviceData(long id)
         {
             var vegaTempDevice = await _context.TempDeviceData.FindAsync(id);

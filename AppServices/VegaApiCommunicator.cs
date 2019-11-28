@@ -1,19 +1,25 @@
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.AppServices.Models;
+using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.AppServices
 {
     public class VegaApiCommunicator : IVegaApiCommunicator
     {
         private readonly Uri _webSocketUri;
+        private readonly string login;
+        private readonly string password;
 
-        public VegaApiCommunicator(Uri webSocketUri)
+        public VegaApiCommunicator(Uri webSocketUri, string login, string password)
         {
-            _webSocketUri = webSocketUri;
+            _webSocketUri = webSocketUri ?? throw new ArgumentNullException(nameof(webSocketUri));
+            this.login = login ?? throw new ArgumentNullException(nameof(login));
+            this.password = password ?? throw new ArgumentNullException(nameof(password));
         }
 
         public VegaRequestBuilder BuildRequest() => new VegaRequestBuilder(_webSocketUri);
@@ -26,11 +32,28 @@ namespace VegaIoTApi.AppServices
             return await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
         }
 
+        private Task<AuthenticationResp> AuthenticateAsync
+            (WebSocket socket, CancellationToken cancellationToken)
+        {
+            var request = new AuthenticationReq()
+            {
+                Login = login,
+                Password = password,
+            };
+            return WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
+        }
+
         public async Task<DeviceDataResp> GetDeviceDataAsync
             (DeviceDataReq request, CancellationToken cancellationToken)
         {
             using var socket = new ClientWebSocket();
             await socket.ConnectAsync(_webSocketUri, cancellationToken);
+
+            var authRequest = await AuthenticateAsync(socket, cancellationToken);
+            
+            if (authRequest.Status != true)
+                throw new InvalidOperationException();
+
             return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000);
         }
 
@@ -46,5 +69,38 @@ namespace VegaIoTApi.AppServices
 
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
+
+        public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from, DateTime to)
+        {
+            var request = new DeviceDataReq()
+            {
+                DevEui = eui,
+                Select = new DeviceDataReq.SelectModel()
+                {
+                    Direction = "UPLINK",
+                    DateFrom = GetUnixTime(from),
+                    DateTo = GetUnixTime(to)
+                }
+            };
+
+            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+
+            var list = new LinkedList<VegaTempDeviceData>();
+
+            foreach (var a in result.DataList)
+            {
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
+                {
+                    var processed = VegaTempDeviceData.Parse(a.Data);
+                    var temperature = processed.Temperature / 10.0;
+                    list.AddLast(processed);
+                }
+            }
+
+            return list;
+        }
+
+        private static int GetUnixTime(DateTime time) => 
+            (int)(time - new DateTime(1970, 1, 1)).TotalSeconds;
     }
 }

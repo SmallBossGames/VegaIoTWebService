@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.AppServices.Models;
+using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.AppServices
 {
@@ -10,6 +13,6 @@ namespace VegaIoTApi.AppServices
             (AuthenticationReq request, CancellationToken cancellationToken);
         Task<DeviceDataResp> GetDeviceDataAsync
             (DeviceDataReq request, CancellationToken cancellationToken);
-        //VegaRequestBuilder BuildRequest();
+        Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from, DateTime to);
     }
 }
