@@ -70,7 +70,7 @@ namespace VegaIoTApi.AppServices
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
 
-        public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from, DateTime to)
+        public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from)
         {
             var request = new DeviceDataReq()
             {
@@ -78,8 +78,7 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
-                    DateFrom = GetUnixTime(from),
-                    DateTo = GetUnixTime(to)
+                    DateFrom = GetUnixTime(from)
                 }
             };
 

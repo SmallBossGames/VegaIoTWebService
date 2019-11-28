@@ -32,7 +32,7 @@ namespace VegaIoTWebService.HostedServices
         {
             _logger.LogInformation("Timed Hosted Service running.");
 
-            _timer = new Timer(UpdateDatabase, null, TimeSpan.Zero, TimeSpan.FromMinutes(5));
+            _timer = new Timer(UpdateDatabase, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 
             return Task.CompletedTask;
         }
@@ -44,8 +44,7 @@ namespace VegaIoTWebService.HostedServices
             foreach (var item in devices)
             {
                 var lastUpdateTime = await dataRepository.GetLastUpdateTime(item.Id);
-                var vegaServerLoadedData = await communicator
-                    .GetTemperatureDeviceDatasAsync(item.Eui, lastUpdateTime, DateTime.Now);
+                var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync(item.Eui, lastUpdateTime);
 
                 await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData);
             }
