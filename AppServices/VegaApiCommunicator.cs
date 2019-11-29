@@ -103,12 +103,12 @@ namespace VegaIoTApi.AppServices
 
         private static ulong GetUnixTime(DateTime time)
         {
-            DateTime unixAge = new DateTime(1970, 1, 1);
+            DateTime unixAge = new DateTime(1970, 1, 1).ToUniversalTime();
             
             if (time < unixAge)
                 return 0;
 
-            return (ulong)(time - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            return (ulong)(time - unixAge).TotalMilliseconds;
         }
            
     }
