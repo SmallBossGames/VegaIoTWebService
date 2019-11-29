@@ -70,7 +70,8 @@ namespace VegaIoTApi.AppServices
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
 
-        public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from)
+        public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
+            (string eui, long deviceId, DateTime from)
         {
             var request = new DeviceDataReq()
             {
@@ -91,6 +92,7 @@ namespace VegaIoTApi.AppServices
                 if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = VegaTempDeviceData.Parse(a.Data);
+                    processed.DeviceId = deviceId;
                     var temperature = processed.Temperature / 10.0;
                     list.AddLast(processed);
                 }
@@ -99,14 +101,14 @@ namespace VegaIoTApi.AppServices
             return list;
         }
 
-        private static int GetUnixTime(DateTime time)
+        private static ulong GetUnixTime(DateTime time)
         {
             DateTime unixAge = new DateTime(1970, 1, 1);
             
             if (time < unixAge)
                 return 0;
 
-            return (int)(time - new DateTime(1970, 1, 1)).TotalSeconds;
+            return (ulong)(time - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
            
     }

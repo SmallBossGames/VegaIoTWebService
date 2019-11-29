@@ -32,6 +32,9 @@ namespace VegaIoTApi
 #if RELEASE
             services.AddDbContext<VegaApiDBContext>
                 (options => options.UseHerokuPostgres(Configuration["DATABASE_URL"]));
+#elif DEBUG
+            services.AddDbContext<VegaApiDBContext>
+                (options => options.UseHerokuPostgres(""));
 #endif
 
             //services.AddDbContext<VegaApiDBContext>

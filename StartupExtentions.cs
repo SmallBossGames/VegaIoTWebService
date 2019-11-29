@@ -27,7 +27,7 @@ namespace VegaIoTApi
 
         public static IServiceCollection AddHostedServices(this IServiceCollection services)
         {
-            services.AddHostedService<VegaDeviceDbSync>();
+            //services.AddHostedService<VegaDeviceDbSync>();
             return services;
         }
 

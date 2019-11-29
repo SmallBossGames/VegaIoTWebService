@@ -18,14 +18,14 @@ namespace VegaIoTApi
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-#if RELEASE
+
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var context = services.GetRequiredService<VegaApiDBContext>();
                 context.Database.Migrate();
             }
-#endif
+
             host.Run();
         }
 

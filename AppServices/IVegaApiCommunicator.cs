@@ -13,6 +13,6 @@ namespace VegaIoTApi.AppServices
             (AuthenticationReq request, CancellationToken cancellationToken);
         Task<DeviceDataResp> GetDeviceDataAsync
             (DeviceDataReq request, CancellationToken cancellationToken);
-        Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, DateTime from);
+        Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, long deviceId, DateTime from);
     }
 }

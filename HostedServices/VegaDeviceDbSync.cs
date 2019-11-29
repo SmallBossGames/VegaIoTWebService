@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VegaIoTApi.AppServices;
@@ -12,20 +13,17 @@ namespace VegaIoTWebService.HostedServices
     {
         private readonly ILogger<VegaDeviceDbSync> _logger;
         private readonly IVegaApiCommunicator communicator;
-        private readonly ITemperatureDeviceDataRepository dataRepository;
-        private readonly ITemperatureDeviceRepository deviceRepository;
+        private readonly IServiceScopeFactory serviceScopeFactory;
         private Timer? _timer = null;
 
         public VegaDeviceDbSync(
             ILogger<VegaDeviceDbSync> logger,
             IVegaApiCommunicator communicator,
-            ITemperatureDeviceDataRepository dataRepository,
-            ITemperatureDeviceRepository deviceRepository)
+            IServiceScopeFactory serviceScopeFactory)
         {
             _logger = logger;
             this.communicator = communicator;
-            this.dataRepository = dataRepository;
-            this.deviceRepository = deviceRepository;
+            this.serviceScopeFactory = serviceScopeFactory;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -39,6 +37,11 @@ namespace VegaIoTWebService.HostedServices
 
         private async void UpdateDatabase(object? state)
         {
+            using var scope = serviceScopeFactory.CreateScope();
+
+            var deviceRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceRepository>();
+            var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
+
             var devices = await deviceRepository.GetTempDevicesAsync();
             Console.WriteLine($"{devices.Count}");
 
@@ -48,7 +51,7 @@ namespace VegaIoTWebService.HostedServices
 
                 Console.WriteLine($"{item.Eui} : {lastUpdateTime.ToString()}");
 
-                var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync(item.Eui, lastUpdateTime);
+                var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync(item.Eui, item.Id, lastUpdateTime);
 
                 await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData);
             }

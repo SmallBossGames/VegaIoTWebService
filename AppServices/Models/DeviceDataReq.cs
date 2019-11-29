@@ -7,9 +7,9 @@ namespace VegaIoTApi.AppServices.Models
         public class SelectModel
         {
             [JsonPropertyName("date_from")]
-            public int? DateFrom { get; set; }
+            public ulong? DateFrom { get; set; }
             [JsonPropertyName("date_to")]
-            public int? DateTo { get; set; }
+            public ulong? DateTo { get; set; }
             [JsonPropertyName("begin_index")]
             public int? BeginIndex { get; set; }
             [JsonPropertyName("limit")]

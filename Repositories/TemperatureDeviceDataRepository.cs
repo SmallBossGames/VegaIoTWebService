@@ -59,7 +59,7 @@ namespace VegaIoTApi.Repositories
         {
             return (from dd in _context.TempDeviceData
                     where dd.DeviceId == deviceId
-                    orderby dd.Uptime
+                    orderby dd.Uptime descending
                     select dd.Uptime).FirstOrDefaultAsync();
         }
 
