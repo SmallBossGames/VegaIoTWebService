@@ -10,10 +10,10 @@ namespace VegaIoTWebService.Data
 {
     public class VegaWebSocketApiContext : IDisposable, IVegaWebSocketApiContext
     {
-        private struct PingModel 
+        private struct PingModel
         {
             [JsonPropertyName("cmd")]
-            public string Cmd { get; set; } 
+            public string Cmd { get; set; }
         }
 
         private struct TokenAuthReq
@@ -152,7 +152,6 @@ namespace VegaIoTWebService.Data
             {
                 return false;
             }
-
         }
 
         private async Task<bool> FastConnectionRecover(CancellationToken cancellationToken)
@@ -184,7 +183,6 @@ namespace VegaIoTWebService.Data
 
             await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken);
             var receiveResult = await socket.ReceiveAsync(reciveBytes, cancellationToken);
-
 
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }

@@ -33,8 +33,8 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync(long deviceId)
         {
             var result = await _repository.GetTempDeviceDatasAsync(deviceId);
-            
-            if(result == null)
+
+            if (result == null)
             {
                 return NotFound();
             }
@@ -66,7 +66,6 @@ namespace VegaIoTApi.Controllers.v001.Temperature
             {
                 return BadRequest();
             }
-
 
             try
             {

@@ -4,178 +4,178 @@ using System.Data.Common;
 namespace VegaIoTApi.Data
 {
     public enum SslMode
-{
-    Require, 
-    Disable,
-    Prefer
-}
-
-public class PostgreSqlConnectionStringBuilder : DbConnectionStringBuilder
-{
-    private string _database = string.Empty;
-    private string _host= string.Empty;
-    private string _password= string.Empty;
-    private bool _pooling;
-    private int _port;
-    private string _username = string.Empty;
-    private bool _trustServerCertificate;
-    private SslMode _sslMode;
-
-    public PostgreSqlConnectionStringBuilder(string uriString)
     {
-        ParseUri(uriString);
+        Require,
+        Disable,
+        Prefer
     }
 
-    public string Database
+    public class PostgreSqlConnectionStringBuilder : DbConnectionStringBuilder
     {
-        get => _database;
-        set
-        {
-            base["database"] = value;
-            _database = value;
-        }
-    }
+        private string _database = string.Empty;
+        private string _host = string.Empty;
+        private string _password = string.Empty;
+        private bool _pooling;
+        private int _port;
+        private string _username = string.Empty;
+        private bool _trustServerCertificate;
+        private SslMode _sslMode;
 
-    public string Host
-    {
-        get => _host;
-        set
+        public PostgreSqlConnectionStringBuilder(string uriString)
         {
-            base["host"] = value;
-            _host = value;
+            ParseUri(uriString);
         }
-    }
 
-    public string Password
-    {
-        get => _password;
-        set
+        public string Database
         {
-            base["password"] = value;
-            _password = value;
-        }
-    }
-
-    public bool Pooling
-    {
-        get => _pooling;
-        set
-        {
-            base["pooling"] = value;
-            _pooling = value;
-        }
-    }
-
-    public int Port
-    {
-        get => _port;
-        set
-        {
-            base["port"] = value;
-            _port = value;
-        }
-    }
-
-    public string Username
-    {
-        get => _username;
-        set
-        {
-            base["username"] = value;
-            _username = value;
-        }
-    }
-
-    public bool TrustServerCertificate
-    {
-        get => _trustServerCertificate;
-        set
-        {
-            base["trust server certificate"] = value;
-            _trustServerCertificate= value;
-        }
-    }
-
-    public SslMode SslMode
-    {
-        get => _sslMode;
-        set
-        {
-            base["ssl mode"] = value.ToString();
-            _sslMode = value;
-        }
-    }
-
-    public override object this[string keyword]
-    {
-        get
-        {
-            if (keyword == null) throw new ArgumentNullException(nameof(keyword));
-            return base[keyword.ToLower()];
-        }
-        set
-        {
-            if (keyword == null) throw new ArgumentNullException(nameof(keyword));
-
-            switch (keyword.ToLower())
+            get => _database;
+            set
             {
-                case "host":
-                    Host = (string) value;
-                    break;
+                base["database"] = value;
+                _database = value;
+            }
+        }
 
-                case "port":
-                    Port = Convert.ToInt32(value);
-                    break;
+        public string Host
+        {
+            get => _host;
+            set
+            {
+                base["host"] = value;
+                _host = value;
+            }
+        }
 
-                case "database":
-                    Database = (string) value;
-                    break;
+        public string Password
+        {
+            get => _password;
+            set
+            {
+                base["password"] = value;
+                _password = value;
+            }
+        }
 
-                case "username":
-                    Username = (string) value;
-                    break;
+        public bool Pooling
+        {
+            get => _pooling;
+            set
+            {
+                base["pooling"] = value;
+                _pooling = value;
+            }
+        }
 
-                case "password":
-                    Password = (string) value;
-                    break;
+        public int Port
+        {
+            get => _port;
+            set
+            {
+                base["port"] = value;
+                _port = value;
+            }
+        }
 
-                case "pooling":
-                    Pooling = Convert.ToBoolean(value);
-                    break;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                base["username"] = value;
+                _username = value;
+            }
+        }
 
-                case "trust server certificate":
-                    TrustServerCertificate = Convert.ToBoolean(value);
-                    break;
+        public bool TrustServerCertificate
+        {
+            get => _trustServerCertificate;
+            set
+            {
+                base["trust server certificate"] = value;
+                _trustServerCertificate = value;
+            }
+        }
 
-                case "sslmode":
-                    SslMode = (SslMode) value;
-                    break;
+        public SslMode SslMode
+        {
+            get => _sslMode;
+            set
+            {
+                base["ssl mode"] = value.ToString();
+                _sslMode = value;
+            }
+        }
 
-                default:
-                    throw new ArgumentException(string.Format("Invalid keyword '{0}'.", keyword));
+        public override object this[string keyword]
+        {
+            get
+            {
+                if (keyword == null) throw new ArgumentNullException(nameof(keyword));
+                return base[keyword.ToLower()];
+            }
+            set
+            {
+                if (keyword == null) throw new ArgumentNullException(nameof(keyword));
+
+                switch (keyword.ToLower())
+                {
+                    case "host":
+                        Host = (string)value;
+                        break;
+
+                    case "port":
+                        Port = Convert.ToInt32(value);
+                        break;
+
+                    case "database":
+                        Database = (string)value;
+                        break;
+
+                    case "username":
+                        Username = (string)value;
+                        break;
+
+                    case "password":
+                        Password = (string)value;
+                        break;
+
+                    case "pooling":
+                        Pooling = Convert.ToBoolean(value);
+                        break;
+
+                    case "trust server certificate":
+                        TrustServerCertificate = Convert.ToBoolean(value);
+                        break;
+
+                    case "sslmode":
+                        SslMode = (SslMode)value;
+                        break;
+
+                    default:
+                        throw new ArgumentException(string.Format("Invalid keyword '{0}'.", keyword));
+                }
+            }
+        }
+
+        public override bool ContainsKey(string keyword)
+        {
+            return base.ContainsKey(keyword.ToLower());
+        }
+
+        private void ParseUri(string uriString)
+        {
+            if (Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
+            {
+                Host = uri.Host;
+                Port = uri.Port;
+                Database = uri.LocalPath.Substring(1);
+                Username = uri.UserInfo.Split(':')[0];
+                Password = uri.UserInfo.Split(':')[1];
+            }
+            else
+            {
+                throw new FormatException(string.Format("'{0}' is not a valid URI.", uriString));
             }
         }
     }
-
-    public override bool ContainsKey(string keyword)
-    {
-        return base.ContainsKey(keyword.ToLower());
-    }
-
-    private void ParseUri(string uriString)
-    {
-        if(Uri.TryCreate(uriString, UriKind.Absolute, out var uri))
-        {
-            Host = uri.Host;
-            Port = uri.Port;
-            Database = uri.LocalPath.Substring(1);
-            Username = uri.UserInfo.Split(':')[0];
-            Password = uri.UserInfo.Split(':')[1];
-        }
-        else
-        {
-            throw new FormatException(string.Format("'{0}' is not a valid URI.", uriString));
-        }
-    }
-}
 }

@@ -66,7 +66,6 @@ namespace VegaIoTApi.AppServices
             await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
             var receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
 
-
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }
 
@@ -97,19 +96,17 @@ namespace VegaIoTApi.AppServices
                     list.AddLast(processed);
                 }
             }
-
             return list;
         }
 
         private static ulong GetUnixTime(DateTime time)
         {
             DateTime unixAge = new DateTime(1970, 1, 1).ToUniversalTime();
-            
+
             if (time < unixAge)
                 return 0;
 
             return (ulong)(time - unixAge).TotalMilliseconds;
         }
-           
     }
 }

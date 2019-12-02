@@ -48,7 +48,7 @@ namespace VegaIoTApi
         {
             var section = configuration.GetSection("VegaConnection").GetSection(key);
             return new VegaConnectionParameters
-            ( 
+            (
                 new Uri(section.GetValue<string>("URL")),
                 section.GetValue<string>("Login"),
                 section.GetValue<string>("Password")

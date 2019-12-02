@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace VegaIoTApi.AppServices.Models
 {
-    public class DeviceTDModel
+    public class DeviceTDModel // датчик температуры
     {
         public byte PackageType { get; set; }
         public byte BatteryLevel { get; set; }

@@ -54,7 +54,6 @@ namespace VegaIoTApi.Controllers.v001.Temperature
                 return BadRequest();
             }
 
-
             try
             {
                 await _repository.EditTempDeviceAsync(vegaTempDevice);

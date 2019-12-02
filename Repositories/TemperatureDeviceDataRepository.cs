@@ -24,7 +24,7 @@ namespace VegaIoTApi.Repositories
 
         public Task<List<VegaTempDeviceData>?> GetTempDeviceDatasAsync(long deviceId)
         {
-            if(!TempDeviceExists(deviceId))
+            if (!TempDeviceExists(deviceId))
             {
                 return Task.FromResult<List<VegaTempDeviceData>?>(null);
             }

@@ -39,9 +39,9 @@ namespace VegaIoTApi.Controllers.Version1.Vega
 
             var list = new List<DeviceTDModel>();
 
-            foreach(var a in result.DataList)
+            foreach (var a in result.DataList)
             {
-                if(a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = DeviceTDModel.Parse(a.Data);
                     var temperature = processed.Temperature / 10.0;
