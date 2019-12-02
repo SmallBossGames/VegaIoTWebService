@@ -12,5 +12,10 @@ namespace VegaIoTWebService.Data.Models
 
             return span;
         }
+
+        public static DateTime GetDateTime(Span<byte> convertedSource)
+        {
+            return new DateTime(1970, 1, 1).AddSeconds(BitConverter.ToUInt32(convertedSource[0..4]));
+        }
     }
 }

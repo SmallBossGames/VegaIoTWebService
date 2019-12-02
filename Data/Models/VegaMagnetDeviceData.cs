@@ -41,8 +41,8 @@ namespace VegaIoTWebService.Data.Models
             Span<byte> convertedSourceTime = stackalloc byte[4];
             convertedSourceTime = Utilits.GetSpan(convertedSourceTime, source[14..22]);
 
-            device.UpTime = new DateTime(1970, 1, 1).
-                AddSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
+            device.UpTime = Utilits.GetDateTime(convertedSourceTime);
+            //device.UpTime = new DateTime(1970, 1, 1).AddSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
 
             return device;
         }
