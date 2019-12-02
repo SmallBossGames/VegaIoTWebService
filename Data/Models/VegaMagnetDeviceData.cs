@@ -14,7 +14,7 @@ namespace VegaIoTWebService.Data.Models
         public byte PackageType { get; set; }
         public short BatteryLevel { get; set; }
         public byte AlwaysZero { get; set; }
-        public short Temperature { get; set; }
+        public double Temperature { get; set; }
         public byte SendReason { get; set; }
         public short InputState { get; set; }
         public DateTime UpTime { get; set; }
@@ -34,13 +34,13 @@ namespace VegaIoTWebService.Data.Models
 
             Span<byte> convertedSourceTemp = stackalloc byte[2];
             convertedSourceTemp = Utilits.GetSpan(convertedSourceTemp, source[6..10]);
+            device.Temperature = BitConverter.ToInt16(convertedSourceTemp) / 10.0;
 
             device.SendReason = byte.Parse(source[10..12], NumberStyles.HexNumber);
             device.InputState = byte.Parse(source[12..14], NumberStyles.HexNumber);
 
             Span<byte> convertedSourceTime = stackalloc byte[4];
             convertedSourceTime = Utilits.GetSpan(convertedSourceTime, source[14..22]);
-
             device.UpTime = Utilits.GetDateTime(convertedSourceTime);
             //device.UpTime = new DateTime(1970, 1, 1).AddSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
 

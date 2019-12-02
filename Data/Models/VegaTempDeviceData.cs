@@ -12,7 +12,7 @@ namespace VegaIoTWebService.Data.Models
         public short BatteryLevel { get; set; }
         public bool PushTheLimit { get; set; }
         public DateTime Uptime { get; set; }
-        public short Temperature { get; set; }
+        public double Temperature { get; set; }
         public short LowLimit { get; set; }
         public short HighLimit { get; set; }
 
@@ -31,11 +31,9 @@ namespace VegaIoTWebService.Data.Models
 
             Span<byte> convertedSource = stackalloc byte[6];
             convertedSource = Utilits.GetSpan(convertedSource, source[6..18]);
-
             temp.Uptime = Utilits.GetDateTime(convertedSource);
             //temp.Uptime = new DateTime(1970, 1, 1).AddSeconds(BitConverter.ToUInt32(convertedSource[0..4]));
-
-            temp.Temperature = BitConverter.ToInt16(convertedSource[4..6]);
+            temp.Temperature = BitConverter.ToInt16(convertedSource[4..6]) / 10.0;
 
             temp.LowLimit = sbyte.Parse(source[18..20], NumberStyles.HexNumber);
             temp.HighLimit = sbyte.Parse(source[20..22], NumberStyles.HexNumber);

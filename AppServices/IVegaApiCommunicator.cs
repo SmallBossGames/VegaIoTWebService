@@ -9,10 +9,12 @@ namespace VegaIoTApi.AppServices
 {
     public interface IVegaApiCommunicator
     {
-        Task<AuthenticationResp> AuthenticateAsync
-            (AuthenticationReq request, CancellationToken cancellationToken);
-        Task<DeviceDataResp> GetDeviceDataAsync
-            (DeviceDataReq request, CancellationToken cancellationToken);
+        Task<AuthenticationResp> AuthenticateAsync(AuthenticationReq request, CancellationToken cancellationToken);
+        Task<DeviceDataResp> GetDeviceDataAsync(DeviceDataReq request, CancellationToken cancellationToken);
+
         Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync(string eui, long deviceId, DateTime from);
+        Task<LinkedList<VegaMoveDeviceData>> GetMoveDeviceDataAsync(string eui, long deviceId, DateTime from);
+        Task<LinkedList<VegaMagnetDeviceData>> GetMagnetDeviceDataAsync(string eui, long deviceId, DateTime from);
+        Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync(string eui, long deviceId, DateTime from);
     }
 }

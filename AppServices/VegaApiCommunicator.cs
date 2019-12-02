@@ -9,7 +9,7 @@ using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.AppServices
 {
-    public class VegaApiCommunicator : IVegaApiCommunicator
+    public class VegaApiCommunicator : IVegaApiCommunicator // связь с вего через веб-сокеты
     {
         private readonly Uri _webSocketUri;
         private readonly string login;
@@ -21,8 +21,6 @@ namespace VegaIoTApi.AppServices
             this.login = login ?? throw new ArgumentNullException(nameof(login));
             this.password = password ?? throw new ArgumentNullException(nameof(password));
         }
-
-        public VegaRequestBuilder BuildRequest() => new VegaRequestBuilder(_webSocketUri);
 
         public async Task<AuthenticationResp> AuthenticateAsync
             (AuthenticationReq request, CancellationToken cancellationToken)
@@ -57,7 +55,7 @@ namespace VegaIoTApi.AppServices
             return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000);
         }
 
-        private async Task<TResponse> WebSocketRequest<TRequest, TResponse>
+        async Task<TResponse> WebSocketRequest<TRequest, TResponse> // сделать брата
             (TRequest request, WebSocket socket, int reciveBufferSize = 2048)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
@@ -67,6 +65,13 @@ namespace VegaIoTApi.AppServices
             var receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
 
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
+        }
+
+        bool TryRequest<TRequest, TResponse>(TRequest request, out TResponse response)
+        {
+            throw new NotImplementedException();
+
+            return true;
         }
 
         public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
@@ -107,6 +112,67 @@ namespace VegaIoTApi.AppServices
                 return 0;
 
             return (ulong)(time - unixAge).TotalMilliseconds;
+        }
+
+        public async Task<LinkedList<VegaMoveDeviceData>> GetMoveDeviceDataAsync(string eui, long deviceId, DateTime from)
+        {
+            var request = new DeviceDataReq()
+            {
+                DevEui = eui,
+                Select = new DeviceDataReq.SelectModel()
+                {
+                    Direction = "UPLINK",
+                    DateFrom = GetUnixTime(from)
+                }
+            };
+
+            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+
+            var list = new LinkedList<VegaMoveDeviceData>();
+
+            foreach (var a in result.DataList)
+            {
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 20)
+                {
+                    var processed = VegaMoveDeviceData.Parse(a.Data);
+                    processed.DeviceId = deviceId; // сделать запись в БД только при условии, что датчик менял своё состояние?
+                    list.AddLast(processed);
+                }
+            }
+            return list;
+        }
+
+        public async Task<LinkedList<VegaMagnetDeviceData>> GetMagnetDeviceDataAsync(string eui, long deviceId, DateTime from)
+        {
+            var request = new DeviceDataReq()
+            {
+                DevEui = eui,
+                Select=new DeviceDataReq.SelectModel() 
+                {
+                    Direction = "UPLINK",
+                    DateFrom = GetUnixTime(from)
+                }
+            };
+
+            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+
+            var list = new LinkedList<VegaMagnetDeviceData>();
+
+            foreach (var a in result.DataList)
+            {
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 22)
+                {
+                    var processed = VegaMagnetDeviceData.Parse(a.Data);
+                    processed.DeviceId = deviceId;
+                    list.AddLast(processed);
+                }
+            }
+            return list;
+        }
+
+        public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync(string eui, long deviceId, DateTime from)
+        {
+            throw new NotImplementedException();
         }
     }
 }
