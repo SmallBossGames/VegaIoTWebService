@@ -12,11 +12,11 @@ namespace VegaIoTWebService.Data.Models
         public VegaTempDevice? Device { get; set; }
         public long DeviceId { get; set; }
         public byte PackageType { get; set; }
-        public byte BatteryLevel { get; set; }
+        public short BatteryLevel { get; set; }
         public byte AlwaysZero { get; set; }
         public short Temperature { get; set; }
         public byte SendReason { get; set; }
-        public byte InputState { get; set; }
+        public short InputState { get; set; }
         public DateTime UpTime { get; set; }
 
         public static VegaMagnetDeviceData Parse(string source)
