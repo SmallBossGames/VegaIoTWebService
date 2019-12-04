@@ -27,6 +27,7 @@ namespace VegaIoTApi.AppServices
         {
             using var socket = new ClientWebSocket();
             await socket.ConnectAsync(_webSocketUri, cancellationToken);
+
             return await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
         }
 
@@ -55,23 +56,16 @@ namespace VegaIoTApi.AppServices
             return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000);
         }
 
-        async Task<TResponse> WebSocketRequest<TRequest, TResponse> // сделать брата
-            (TRequest request, WebSocket socket, int reciveBufferSize = 2048)
+        async Task<TResponse> WebSocketRequest<TRequest, TResponse>
+            (TRequest request, WebSocket socket, int receiveBufferSize = 2048)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
-            var reciveBytes = new byte[reciveBufferSize];
+            var receiveBytes = new byte[receiveBufferSize];
 
             await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
-            var receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
+            var receiveResult = await socket.ReceiveAsync(receiveBytes, CancellationToken.None);
 
-            return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
-        }
-
-        bool TryRequest<TRequest, TResponse>(TRequest request, out TResponse response)
-        {
-            throw new NotImplementedException();
-
-            return true;
+            return JsonSerializer.Deserialize<TResponse>(receiveBytes[..receiveResult.Count]);
         }
 
         public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
