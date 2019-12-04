@@ -22,7 +22,7 @@ namespace VegaIoTWebService.Data.Models
         public short InputState_3 { get; set; }
         public short InputState_4 { get; set; }
 
-        public VegaImpulsDeviceData Parse(string source)
+        public static VegaImpulsDeviceData Parse(string source)
         {
             const int byteSize = 24;
             const int charSpanSize = byteSize * 2;
@@ -60,7 +60,7 @@ namespace VegaIoTWebService.Data.Models
             return device;
         }
 
-        public VegaImpulsDeviceData ParseAlarm(string source)
+        public static VegaImpulsDeviceData ParseAlarm(string source)
         {
             const int byteSize = 24;
             const int charSpanSize = byteSize * 2;

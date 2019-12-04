@@ -147,7 +147,7 @@ namespace VegaIoTApi.AppServices
             var request = new DeviceDataReq()
             {
                 DevEui = eui,
-                Select=new DeviceDataReq.SelectModel() 
+                Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
                     DateFrom = GetUnixTime(from)
@@ -172,7 +172,29 @@ namespace VegaIoTApi.AppServices
 
         public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync(string eui, long deviceId, DateTime from)
         {
-            throw new NotImplementedException();
+            // возможно, нужна перепись этой и других функций под нужную конечную логику
+            var request = new DeviceDataReq()
+            {
+                DevEui = eui,
+                Select = new DeviceDataReq.SelectModel()
+                {
+                    Direction = "UPLINK", // проверить по апи датчика СИ-11
+                    DateFrom = GetUnixTime(from)
+                }
+            };
+
+            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+
+            var list = new LinkedList<VegaImpulsDeviceData>();
+
+            foreach (var a in result.DataList)
+            {
+                var processed = VegaImpulsDeviceData.Parse(a.Data);
+                processed.DeviceId = deviceId;
+                list.AddLast(processed);
+            }
+
+            return list;
         }
     }
 }
