@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.Data;
 using VegaIoTWebService.Data.Models;
@@ -17,55 +18,80 @@ namespace VegaIoTApi.Repositories
             _context = context;
         }
 
-        public Task<List<VegaTempDeviceData>> GetTempDeviceDatasAsync()
+        public Task<List<VegaTempDeviceData>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            return _context.TempDeviceData.ToListAsync();
+            return _context.TempDeviceData.ToListAsync(cancellationToken);
         }
 
-        public Task<List<VegaTempDeviceData>?> GetTempDeviceDatasAsync(long deviceId)
+        public Task<List<VegaTempDeviceData>?> GetAllAsync(long deviceId, CancellationToken cancellationToken = default)
         {
             if (!TempDeviceExists(deviceId))
             {
                 return Task.FromResult<List<VegaTempDeviceData>?>(null);
             }
-            return _context.TempDeviceData.Where(x => x.DeviceId == deviceId).ToListAsync();
+            return _context.TempDeviceData.Where(x => x.DeviceId == deviceId).ToListAsync(cancellationToken);
         }
 
-        public async Task<VegaTempDeviceData?> GetTempDeviceDataAsync(long id)
+        public Task<List<VegaTempDeviceData>> GetCurrentAsync(CancellationToken token = default)
         {
-            return await _context.TempDeviceData.FindAsync(id); ;
+            throw new NotImplementedException();
+            //var dataIds = (from data in _context.TempDeviceData
+            //               group data by data.DeviceId into gData
+            //               select new { gData.Key, date = gData.Max(x => x.Uptime) });
+
+            //var resultQuery = _context.TempDeviceData.Where(x => ).Select(x => x);
+            
+            //foreach (var item in dataIds)
+            //{
+            //    resultQuery = 
+            //}
         }
 
-        public async Task EditTempDeviceDataAsync(VegaTempDeviceData tempDeviceData)
+        public Task<VegaTempDeviceData?> GetCurrentAsync(long deviceId, CancellationToken cancellationToken = default)
+        {
+            return (from data in _context.TempDeviceData
+                    where data.DeviceId == deviceId
+                    orderby data.Uptime descending
+                    select data).FirstOrDefaultAsync(cancellationToken);
+        }
+
+        public async Task<VegaTempDeviceData?> GetDataAsync(long id, CancellationToken cancellationToken = default)
+        {
+            return await _context.TempDeviceData.FindAsync(new object[] { id }, cancellationToken);
+        }
+
+        public async Task EditTempDeviceDataAsync(VegaTempDeviceData tempDeviceData, CancellationToken cancellationToken = default)
         {
             _context.Entry(tempDeviceData).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<VegaTempDeviceData> AddTempDeviceDataAsync(VegaTempDeviceData tempDeviceData)
+        public async Task<VegaTempDeviceData> AddTempDeviceDataAsync
+            (VegaTempDeviceData tempDeviceData, CancellationToken cancellationToken = default)
         {
             _context.TempDeviceData.Add(tempDeviceData);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
             return tempDeviceData;
         }
 
-        public async Task AddTempDeviceDataAsync(IEnumerable<VegaTempDeviceData> tempDeviceData)
+        public async Task AddTempDeviceDataAsync(IEnumerable<VegaTempDeviceData> tempDeviceData, CancellationToken cancellationToken = default)
         {
-            await _context.TempDeviceData.AddRangeAsync(tempDeviceData);
-            await _context.SaveChangesAsync();
+            await _context.TempDeviceData.AddRangeAsync(tempDeviceData, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public Task<DateTime> GetLastUpdateTime(long deviceId)
+        public Task<DateTimeOffset> GetLastUpdateTime(long deviceId, CancellationToken cancellationToken = default)
         {
             return (from dd in _context.TempDeviceData
                     where dd.DeviceId == deviceId
                     orderby dd.Uptime descending
-                    select dd.Uptime).FirstOrDefaultAsync();
+                    select dd.Uptime).FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<VegaTempDeviceData?> DeleteVegaTempDeviceData(long id)
+        public async Task<VegaTempDeviceData?> DeleteVegaTempDeviceData
+            (long id, CancellationToken cancellationToken = default)
         {
-            var vegaTempDevice = await _context.TempDeviceData.FindAsync(id);
+            var vegaTempDevice = await _context.TempDeviceData.FindAsync(new object[] { id }, cancellationToken);
 
             if (vegaTempDevice == null)
             {
@@ -73,7 +99,7 @@ namespace VegaIoTApi.Repositories
             }
 
             _context.TempDeviceData.Remove(vegaTempDevice);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return vegaTempDevice;
         }

@@ -9,7 +9,10 @@ using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.AppServices
 {
-    public class VegaApiCommunicator : IVegaApiCommunicator // связь с вего через веб-сокеты
+    /// <summary>
+    /// Связь с вегой через веб-сокеты
+    /// </summary>
+    public class VegaApiCommunicator : IVegaApiCommunicator 
     {
         private readonly Uri _webSocketUri;
         private readonly string login;
@@ -23,7 +26,7 @@ namespace VegaIoTApi.AppServices
         }
 
         public async Task<AuthenticationResp> AuthenticateAsync
-            (AuthenticationReq request, CancellationToken cancellationToken)
+            (AuthenticationReq request, CancellationToken cancellationToken = default)
         {
             using var socket = new ClientWebSocket();
             await socket.ConnectAsync(_webSocketUri, cancellationToken);
@@ -32,7 +35,7 @@ namespace VegaIoTApi.AppServices
         }
 
         private Task<AuthenticationResp> AuthenticateAsync
-            (WebSocket socket, CancellationToken cancellationToken)
+            (WebSocket socket, CancellationToken cancellationToken = default)
         {
             var request = new AuthenticationReq()
             {
@@ -43,7 +46,7 @@ namespace VegaIoTApi.AppServices
         }
 
         public async Task<DeviceDataResp> GetDeviceDataAsync
-            (DeviceDataReq request, CancellationToken cancellationToken)
+            (DeviceDataReq request, CancellationToken cancellationToken = default)
         {
             using var socket = new ClientWebSocket();
             await socket.ConnectAsync(_webSocketUri, cancellationToken);
@@ -57,31 +60,41 @@ namespace VegaIoTApi.AppServices
         }
 
         async Task<TResponse> WebSocketRequest<TRequest, TResponse>
-            (TRequest request, WebSocket socket, int receiveBufferSize = 2048)
+            (TRequest request, WebSocket socket, int receiveBufferSize = 2048, CancellationToken cancellationToken = default)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
             var receiveBytes = new byte[receiveBufferSize];
 
-            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
-            var receiveResult = await socket.ReceiveAsync(receiveBytes, CancellationToken.None);
+            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken);
+            var receiveResult = await socket.ReceiveAsync(receiveBytes, cancellationToken);
 
             return JsonSerializer.Deserialize<TResponse>(receiveBytes[..receiveResult.Count]);
         }
 
         public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
-            (string eui, long deviceId, DateTime from)
+            (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
+            var unixTime = from.ToUnixTimeMilliseconds();
+
             var request = new DeviceDataReq()
             {
                 DevEui = eui,
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
-                    DateFrom = GetUnixTime(from)
+                    DateFrom = unixTime < 0 ? 0 : unixTime,
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+            DeviceDataResp result;
+            try
+            {
+                result = await GetDeviceDataAsync(request, cancellationToken);
+            }
+            catch(WebSocketException)
+            {
+                return new LinkedList<VegaTempDeviceData>();
+            }
 
             var list = new LinkedList<VegaTempDeviceData>();
 
@@ -90,25 +103,18 @@ namespace VegaIoTApi.AppServices
                 if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = VegaTempDeviceData.Parse(a.Data);
-                    processed.DeviceId = deviceId;
-                    var temperature = processed.Temperature / 10.0;
-                    list.AddLast(processed);
+                    if(processed.Uptime > from)
+                    {
+                        processed.DeviceId = deviceId;
+                        list.AddLast(processed);
+                    }
                 }
             }
             return list;
         }
 
-        private static ulong GetUnixTime(DateTime time)
-        {
-            DateTime unixAge = new DateTime(1970, 1, 1).ToUniversalTime();
-
-            if (time < unixAge)
-                return 0;
-
-            return (ulong)(time - unixAge).TotalMilliseconds;
-        }
-
-        public async Task<LinkedList<VegaMoveDeviceData>> GetMoveDeviceDataAsync(string eui, long deviceId, DateTime from)
+        public async Task<LinkedList<VegaMoveDeviceData>> GetMoveDeviceDataAsync
+            (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
             var request = new DeviceDataReq()
             {
@@ -116,11 +122,11 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
-                    DateFrom = GetUnixTime(from)
+                    DateFrom = from.ToUnixTimeMilliseconds(),
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+            var result = await GetDeviceDataAsync(request, cancellationToken);
 
             var list = new LinkedList<VegaMoveDeviceData>();
 
@@ -136,7 +142,8 @@ namespace VegaIoTApi.AppServices
             return list;
         }
 
-        public async Task<LinkedList<VegaMagnetDeviceData>> GetMagnetDeviceDataAsync(string eui, long deviceId, DateTime from)
+        public async Task<LinkedList<VegaMagnetDeviceData>> GetMagnetDeviceDataAsync
+            (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
             var request = new DeviceDataReq()
             {
@@ -144,11 +151,11 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
-                    DateFrom = GetUnixTime(from)
+                    DateFrom = from.ToUnixTimeMilliseconds(),
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+            var result = await GetDeviceDataAsync(request, cancellationToken);
 
             var list = new LinkedList<VegaMagnetDeviceData>();
 
@@ -164,7 +171,8 @@ namespace VegaIoTApi.AppServices
             return list;
         }
 
-        public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync(string eui, long deviceId, DateTime from)
+        public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync
+            (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
             // возможно, нужна перепись этой и других функций под нужную конечную логику
             var request = new DeviceDataReq()
@@ -173,11 +181,11 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK", // проверить по апи датчика СИ-11
-                    DateFrom = GetUnixTime(from)
+                    DateFrom = from.ToUnixTimeMilliseconds(),
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, CancellationToken.None);
+            var result = await GetDeviceDataAsync(request, cancellationToken);
 
             var list = new LinkedList<VegaImpulsDeviceData>();
 

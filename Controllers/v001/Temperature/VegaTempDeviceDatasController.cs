@@ -23,16 +23,16 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         }
 
         // GET: api/VegaTempDeviceDatas
-        [HttpGet("datas")]
-        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync()
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync()
         {
-            return await _repository.GetTempDeviceDatasAsync();
+            return await _repository.GetAllAsync();
         }
 
-        [HttpGet("datas/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetDeviceDatasAsync(long deviceId)
+        [HttpGet("all/{deviceId}")]
+        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync(long deviceId)
         {
-            var result = await _repository.GetTempDeviceDatasAsync(deviceId);
+            var result = await _repository.GetAllAsync(deviceId);
 
             if (result == null)
             {
@@ -43,10 +43,29 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         }
 
         // GET: api/VegaTempDeviceDatas/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<VegaTempDeviceData>> GetTempDeviceData(long id)
+        [HttpGet("current/{deviceId}")]
+        public async Task<ActionResult<VegaTempDeviceData>> GetCurrentAsync(long deviceId)
         {
-            var vegaTempDeviceData = await _repository.GetTempDeviceDataAsync(id);
+            var vegaTempDeviceData = await _repository.GetCurrentAsync(deviceId);
+
+            if (vegaTempDeviceData == null)
+            {
+                return NotFound();
+            }
+
+            return vegaTempDeviceData;
+        }
+
+        [HttpGet("current")]
+        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetCurrentAsync()
+        {
+            return await _repository.GetCurrentAsync();
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<VegaTempDeviceData>> GetAsync(long id)
+        {
+            var vegaTempDeviceData = await _repository.GetDataAsync(id);
 
             if (vegaTempDeviceData == null)
             {

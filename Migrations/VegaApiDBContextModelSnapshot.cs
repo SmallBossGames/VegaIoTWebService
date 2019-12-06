@@ -63,11 +63,11 @@ namespace VegaIoTApi.Migrations
                     b.Property<bool>("PushTheLimit")
                         .HasColumnType("boolean");
 
-                    b.Property<short>("Temperature")
-                        .HasColumnType("smallint");
+                    b.Property<double>("Temperature")
+                        .HasColumnType("double precision");
 
-                    b.Property<DateTime>("Uptime")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<DateTimeOffset>("Uptime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 

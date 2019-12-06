@@ -31,8 +31,8 @@ namespace VegaIoTApi.Migrations
                     DeviceId = table.Column<long>(nullable: false),
                     BatteryLevel = table.Column<short>(nullable: false),
                     PushTheLimit = table.Column<bool>(nullable: false),
-                    Uptime = table.Column<DateTime>(nullable: false),
-                    Temperature = table.Column<short>(nullable: false),
+                    Uptime = table.Column<DateTimeOffset>(nullable: false),
+                    Temperature = table.Column<double>(nullable: false),
                     LowLimit = table.Column<short>(nullable: false),
                     HighLimit = table.Column<short>(nullable: false)
                 },

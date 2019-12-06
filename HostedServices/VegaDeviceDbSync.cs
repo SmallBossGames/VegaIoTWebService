@@ -9,18 +9,21 @@ using VegaIoTApi.Repositories;
 
 namespace VegaIoTWebService.HostedServices
 {
-    public class VegaDeviceDbSync : IHostedService, IDisposable
+    public sealed class VegaDeviceDbSync : IHostedService, IDisposable
     {
         private readonly ILogger<VegaDeviceDbSync> _logger;
         private readonly IVegaApiCommunicator communicator;
         private readonly IServiceScopeFactory serviceScopeFactory;
+
         private Timer? _timer = null;
+        private CancellationToken _cancellationToken = default;
 
         public VegaDeviceDbSync(
             ILogger<VegaDeviceDbSync> logger,
             IVegaApiCommunicator communicator,
             IServiceScopeFactory serviceScopeFactory)
         {
+
             _logger = logger;
             this.communicator = communicator;
             this.serviceScopeFactory = serviceScopeFactory;
@@ -30,6 +33,7 @@ namespace VegaIoTWebService.HostedServices
         {
             _logger.LogInformation("Timed Hosted Service running.");
 
+            _cancellationToken = cancellationToken;
             _timer = new Timer(UpdateDatabase, null, TimeSpan.Zero, TimeSpan.FromMinutes(10));
 
             return Task.CompletedTask;
@@ -42,17 +46,17 @@ namespace VegaIoTWebService.HostedServices
             var deviceRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceRepository>();
             var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
 
-            var devices = await deviceRepository.GetTempDevicesAsync();
+            var devices = await deviceRepository.GetTempDevicesAsync(_cancellationToken);
             Console.WriteLine($"{devices.Count}");
 
             foreach (var item in devices)
             {
-                var lastUpdateTime = await dataRepository.GetLastUpdateTime(item.Id);
+                var lastUpdateTime = await dataRepository.GetLastUpdateTime(item.Id, _cancellationToken);
 
                 var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync
-                    (item.Eui, item.Id, lastUpdateTime);
+                    (item.Eui, item.Id, lastUpdateTime, _cancellationToken);
 
-                await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData);
+                await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken);
             }
         }
 

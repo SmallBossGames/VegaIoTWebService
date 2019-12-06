@@ -16,7 +16,7 @@ namespace VegaIoTWebService.Data.Models
         public byte MainSettings { get; set; }
         public double Temperature { get; set; }
         public byte SendReason { get; set; }
-        public DateTime UpTime { get; set; }
+        public DateTimeOffset UpTime { get; set; }
 
         public static VegaMoveDeviceData Parse(string source)
         {
@@ -31,16 +31,13 @@ namespace VegaIoTWebService.Data.Models
             device.BatteryLevel = byte.Parse(source[2..4], NumberStyles.HexNumber);
             device.MainSettings = byte.Parse(source[4..6], NumberStyles.HexNumber);
 
-            Span<byte> convertedSourceTemp = stackalloc byte[2];
-            convertedSourceTemp = Utilits.GetSpan(convertedSourceTemp, source[6..10]);
+            var convertedSourceTemp = Utilits.ConvertHexString(stackalloc byte[2], source[6..10]);
             device.Temperature = BitConverter.ToInt16(convertedSourceTemp[0..2]) / 10.0;
 
             device.SendReason = byte.Parse(source[10..12], NumberStyles.HexNumber);
 
-            Span<byte> convertedSourceTime = stackalloc byte[4];
-            convertedSourceTime = Utilits.GetSpan(convertedSourceTime, source[12..20]);
-            device.UpTime = Utilits.GetDateTime(convertedSourceTime);
-            //device.UpTime = new DateTime(1970, 1, 1).AddSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
+            var convertedSourceTime = Utilits.ConvertHexString(stackalloc byte[4], source[12..20]);
+            device.UpTime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
 
             return device;
         }
