@@ -5,29 +5,29 @@ using Microsoft.EntityFrameworkCore;
 using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
-namespace VegaIoTApi.Controllers.v001.Temperature
+namespace VegaIoTApi.Controllers.v001.Device
 {
-    [Route("api/v001/temperature/[controller]")]
     [ApiController]
-    public class VegaTempDevicesController : ControllerBase
+    [Route("api/v001/[controller]")]
+    public class DevicesController : ControllerBase
     {
         private readonly IDeviceRepository _repository;
 
-        public VegaTempDevicesController(IDeviceRepository repository)
+        public DevicesController(IDeviceRepository repository)
         {
             _repository = repository;
         }
 
         // GET: api/VegaTempDevices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VegaTempDevice>>> GetTempDevices()
+        public async Task<ActionResult<IEnumerable<VegaTempDevice>>> GetDeviceAsync()
         {
             return await _repository.GetDevicesAsync();
         }
 
         // GET: api/VegaTempDevices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<VegaTempDevice>> GetVegaTempDevice(long id)
+        public async Task<ActionResult<VegaTempDevice>> GetDeviceAsync(long id)
         {
             var vegaTempDevice = await _repository.GetDeviceAsync(id);
 
@@ -40,7 +40,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVegaTempDevice(long id, VegaTempDevice vegaTempDevice)
+        public async Task<IActionResult> PutDeviceAsync(long id, VegaTempDevice vegaTempDevice)
         {
             if (id != vegaTempDevice.Id)
             {
@@ -70,7 +70,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<VegaTempDevice>> PostVegaTempDevice(VegaTempDevice vegaTempDevice)
+        public async Task<ActionResult<VegaTempDevice>> PostDeviceAsync(VegaTempDevice vegaTempDevice)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
 
         // DELETE: api/VegaTempDevices/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VegaTempDevice?>> DeleteVegaTempDevice(long id)
+        public async Task<ActionResult<VegaTempDevice?>> DeleteDeviceAsync(long id)
         {
             var result = await _repository.DeleteDeviceAsync(id);
             if (result == null)
