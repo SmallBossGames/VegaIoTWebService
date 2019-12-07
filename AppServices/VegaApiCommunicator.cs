@@ -12,7 +12,7 @@ namespace VegaIoTApi.AppServices
     /// <summary>
     /// Связь с вегой через веб-сокеты
     /// </summary>
-    public class VegaApiCommunicator : IVegaApiCommunicator 
+    public class VegaApiCommunicator : IVegaApiCommunicator
     {
         private readonly Uri _webSocketUri;
         private readonly string login;
@@ -91,7 +91,7 @@ namespace VegaIoTApi.AppServices
             {
                 result = await GetDeviceDataAsync(request, cancellationToken);
             }
-            catch(WebSocketException)
+            catch (WebSocketException)
             {
                 return new LinkedList<VegaTempDeviceData>();
             }
@@ -103,7 +103,7 @@ namespace VegaIoTApi.AppServices
                 if (a.Type == "UNCONF_UP" && a.Data.Length >= 26 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = VegaTempDeviceData.Parse(a.Data);
-                    if(processed.Uptime > from)
+                    if (processed.Uptime > from)
                     {
                         processed.DeviceId = deviceId;
                         list.AddLast(processed);
@@ -168,6 +168,7 @@ namespace VegaIoTApi.AppServices
                     list.AddLast(processed);
                 }
             }
+
             return list;
         }
 

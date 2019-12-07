@@ -24,6 +24,4 @@ namespace VegaIoTApi.Repositories.Utilities
             return (T)replacer.Visit(expr);
         }
     }
-
-
 }

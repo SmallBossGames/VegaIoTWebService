@@ -41,12 +41,11 @@ namespace VegaIoTApi.Repositories
                            select new { gData.Key, date = gData.Max(x => x.Uptime) })
                            .AsNoTracking();
 
-
             Expression<Func<VegaTempDeviceData, bool>> predict = x => false;
 
             foreach (var item in dataIds)
             {
-                Expression<Func<VegaTempDeviceData, bool>> lambdaNew = 
+                Expression<Func<VegaTempDeviceData, bool>> lambdaNew =
                     x => x.Uptime == item.date && x.DeviceId == item.Key;
 
                 var lambdaBody = ExpressionReplacer
@@ -107,9 +106,7 @@ namespace VegaIoTApi.Repositories
             var vegaTempDevice = await _context.TempDeviceData.FindAsync(new object[] { id }, cancellationToken);
 
             if (vegaTempDevice == null)
-            {
                 return null;
-            }
 
             _context.TempDeviceData.Remove(vegaTempDevice);
             await _context.SaveChangesAsync(cancellationToken);

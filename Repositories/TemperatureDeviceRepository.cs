@@ -47,9 +47,7 @@ namespace VegaIoTApi.Repositories
             var vegaTempDevice = await _context.TempDevices.FindAsync(new object[] { id }, token);
 
             if (vegaTempDevice == null)
-            {
                 return null;
-            }
 
             _context.TempDevices.Remove(vegaTempDevice);
             await _context.SaveChangesAsync(token);
