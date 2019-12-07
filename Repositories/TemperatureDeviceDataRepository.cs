@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.Data;
+using VegaIoTApi.Repositories.Utilities;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Repositories
@@ -34,17 +36,28 @@ namespace VegaIoTApi.Repositories
 
         public Task<List<VegaTempDeviceData>> GetCurrentAsync(CancellationToken token = default)
         {
-            throw new NotImplementedException();
-            //var dataIds = (from data in _context.TempDeviceData
-            //               group data by data.DeviceId into gData
-            //               select new { gData.Key, date = gData.Max(x => x.Uptime) });
+            var dataIds = (from data in _context.TempDeviceData
+                           group data by data.DeviceId into gData
+                           select new { gData.Key, date = gData.Max(x => x.Uptime) })
+                           .AsNoTracking();
 
-            //var resultQuery = _context.TempDeviceData.Where(x => ).Select(x => x);
-            
-            //foreach (var item in dataIds)
-            //{
-            //    resultQuery = 
-            //}
+
+            Expression<Func<VegaTempDeviceData, bool>> predict = x => false;
+
+            foreach (var item in dataIds)
+            {
+                Expression<Func<VegaTempDeviceData, bool>> lambdaNew = 
+                    x => x.Uptime == item.date && x.DeviceId == item.Key;
+
+                var lambdaBody = ExpressionReplacer
+                    .ReplaceParameter(lambdaNew.Body, lambdaNew.Parameters[0], predict.Parameters[0]);
+
+                var body = Expression.OrElse(predict.Body, lambdaBody);
+
+                predict = Expression.Lambda<Func<VegaTempDeviceData, bool>>(body, predict.Parameters);
+            }
+
+            return _context.TempDeviceData.Where(predict).AsNoTracking().ToListAsync(token);
         }
 
         public Task<VegaTempDeviceData?> GetCurrentAsync(long deviceId, CancellationToken cancellationToken = default)

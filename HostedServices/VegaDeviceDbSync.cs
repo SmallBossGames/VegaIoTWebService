@@ -47,7 +47,6 @@ namespace VegaIoTWebService.HostedServices
             var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
 
             var devices = await deviceRepository.GetTempDevicesAsync(_cancellationToken);
-            Console.WriteLine($"{devices.Count}");
 
             foreach (var item in devices)
             {
