@@ -29,9 +29,9 @@ namespace VegaIoTApi.AppServices
             (AuthenticationReq request, CancellationToken cancellationToken = default)
         {
             using var socket = new ClientWebSocket();
-            await socket.ConnectAsync(_webSocketUri, cancellationToken);
+            await socket.ConnectAsync(_webSocketUri, cancellationToken).ConfigureAwait(false);
 
-            return await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
+            return await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket).ConfigureAwait(false);
         }
 
         private Task<AuthenticationResp> AuthenticateAsync
@@ -42,21 +42,21 @@ namespace VegaIoTApi.AppServices
                 Login = login,
                 Password = password,
             };
-            return WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket);
+            return WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, socket, 2048, cancellationToken);
         }
 
         public async Task<DeviceDataResp> GetDeviceDataAsync
             (DeviceDataReq request, CancellationToken cancellationToken = default)
         {
             using var socket = new ClientWebSocket();
-            await socket.ConnectAsync(_webSocketUri, cancellationToken);
+            await socket.ConnectAsync(_webSocketUri, cancellationToken).ConfigureAwait(false);
 
-            var authRequest = await AuthenticateAsync(socket, cancellationToken);
+            var authRequest = await AuthenticateAsync(socket, cancellationToken).ConfigureAwait(false);
 
             if (authRequest.Status != true)
                 throw new InvalidOperationException();
 
-            return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000);
+            return await WebSocketRequest<DeviceDataReq, DeviceDataResp>(request, socket, 10000).ConfigureAwait(false);
         }
 
         async Task<TResponse> WebSocketRequest<TRequest, TResponse>
@@ -65,8 +65,13 @@ namespace VegaIoTApi.AppServices
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
             var receiveBytes = new byte[receiveBufferSize];
 
-            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken);
-            var receiveResult = await socket.ReceiveAsync(receiveBytes, cancellationToken);
+            await socket
+                .SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken)
+                .ConfigureAwait(false);
+
+            var receiveResult = await socket
+                .ReceiveAsync(receiveBytes, cancellationToken)
+                .ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<TResponse>(receiveBytes[..receiveResult.Count]);
         }
@@ -89,7 +94,8 @@ namespace VegaIoTApi.AppServices
             DeviceDataResp result;
             try
             {
-                result = await GetDeviceDataAsync(request, cancellationToken);
+                result = await GetDeviceDataAsync(request, cancellationToken)
+                    .ConfigureAwait(false);
             }
             catch (WebSocketException)
             {
@@ -126,7 +132,8 @@ namespace VegaIoTApi.AppServices
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, cancellationToken);
+            var result = await GetDeviceDataAsync(request, cancellationToken)
+                .ConfigureAwait(false);
 
             var list = new LinkedList<VegaMoveDeviceData>();
 
@@ -155,7 +162,8 @@ namespace VegaIoTApi.AppServices
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, cancellationToken);
+            var result = await GetDeviceDataAsync(request, cancellationToken)
+                .ConfigureAwait(false);
 
             var list = new LinkedList<VegaMagnetDeviceData>();
 
@@ -186,7 +194,8 @@ namespace VegaIoTApi.AppServices
                 }
             };
 
-            var result = await GetDeviceDataAsync(request, cancellationToken);
+            var result = await GetDeviceDataAsync(request, cancellationToken)
+                .ConfigureAwait(false);
 
             var list = new LinkedList<VegaImpulsDeviceData>();
 

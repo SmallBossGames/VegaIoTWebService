@@ -23,6 +23,11 @@ namespace VegaIoTApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            if (modelBuilder is null)
+            {
+                throw new System.ArgumentNullException(nameof(modelBuilder));
+            }
+
             modelBuilder.Entity<VegaTempDevice>()
                 .HasIndex(d => d.Eui);
         }

@@ -32,13 +32,13 @@ namespace VegaIoTApi.Repositories
         public async Task EditDeviceAsync(VegaTempDevice vegaTempDevice, CancellationToken token = default)
         {
             _context.Entry(vegaTempDevice).State = EntityState.Modified;
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
         }
 
         public async Task<VegaTempDevice> AddDeviceAsync(VegaTempDevice tempDevice, CancellationToken token = default)
         {
             _context.TempDevices.Add(tempDevice);
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
             return tempDevice;
         }
 
@@ -50,7 +50,7 @@ namespace VegaIoTApi.Repositories
                 return null;
 
             _context.TempDevices.Remove(vegaTempDevice);
-            await _context.SaveChangesAsync(token);
+            await _context.SaveChangesAsync(token).ConfigureAwait(false);
 
             return vegaTempDevice;
         }

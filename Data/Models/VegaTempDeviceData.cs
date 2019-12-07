@@ -18,6 +18,11 @@ namespace VegaIoTWebService.Data.Models
 
         public static VegaTempDeviceData Parse(string source)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             const int byteSize = 13;
             const int charSpanSize = byteSize * 2;
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace VegaIoTApi.AppServices
 {
-    public readonly struct VegaRequest
+    public class VegaRequest
     {
         private readonly Uri connectionUri;
         private readonly Func<WebSocket, CancellationToken, Task>[] actions;
@@ -19,12 +19,12 @@ namespace VegaIoTApi.AppServices
         public async Task RunAsync(CancellationToken token)
         {
             using var socket = new ClientWebSocket();
-            await socket.ConnectAsync(connectionUri, token);
+            await socket.ConnectAsync(connectionUri, token).ConfigureAwait(false);
 
             foreach (var action in actions)
             {
                 if (action != null)
-                    await action(socket, token);
+                    await action(socket, token).ConfigureAwait(false);
             }
         }
 

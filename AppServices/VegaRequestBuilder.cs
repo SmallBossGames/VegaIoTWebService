@@ -32,7 +32,8 @@ namespace VegaIoTApi.AppServices
             Func<WebSocket, CancellationToken, Task> newAction = async (socket, token) =>
             {
                 var result = await WebSocketRequest<AuthenticationReq, AuthenticationResp>
-                    (authenticationReuest, socket, token, responceBufferSice);
+                    (authenticationReuest, socket, responceBufferSice, token).ConfigureAwait(false);
+
                 action?.Invoke(result);
             };
 
@@ -44,13 +45,18 @@ namespace VegaIoTApi.AppServices
             => new VegaRequest(connectionUri, actions.ToArray());
 
         private static async Task<TResponse> WebSocketRequest<TRequest, TResponse>
-            (TRequest request, WebSocket socket, CancellationToken cancellationToken, int reciveBufferSize)
+            (TRequest request, WebSocket socket, int reciveBufferSize, CancellationToken cancellationToken = default)
         {
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
             var reciveBytes = new byte[reciveBufferSize];
 
-            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, CancellationToken.None);
-            var receiveResult = await socket.ReceiveAsync(reciveBytes, CancellationToken.None);
+            await socket
+                .SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken)
+                .ConfigureAwait(false);
+
+            var receiveResult = await socket
+                .ReceiveAsync(reciveBytes, cancellationToken)
+                .ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }

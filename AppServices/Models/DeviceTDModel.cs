@@ -17,6 +17,11 @@ namespace VegaIoTApi.AppServices.Models
 
         public static DeviceTDModel Parse(string source)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             const int byteSize = 13;
             const int charSapnSize = byteSize * 2;
 

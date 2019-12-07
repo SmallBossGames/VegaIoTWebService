@@ -47,6 +47,16 @@ namespace VegaIoTApi
         public static VegaConnectionParameters GetVegaConnectionParameters
             (this IConfiguration configuration, string key)
         {
+            if (configuration is null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (key is null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             var section = configuration.GetSection("VegaConnection").GetSection(key);
             return new VegaConnectionParameters
             (

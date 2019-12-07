@@ -76,21 +76,21 @@ namespace VegaIoTApi.Repositories
         public async Task EditTempDeviceDataAsync(VegaTempDeviceData tempDeviceData, CancellationToken cancellationToken = default)
         {
             _context.Entry(tempDeviceData).State = EntityState.Modified;
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<VegaTempDeviceData> AddTempDeviceDataAsync
             (VegaTempDeviceData tempDeviceData, CancellationToken cancellationToken = default)
         {
             _context.TempDeviceData.Add(tempDeviceData);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return tempDeviceData;
         }
 
         public async Task AddTempDeviceDataAsync(IEnumerable<VegaTempDeviceData> tempDeviceData, CancellationToken cancellationToken = default)
         {
-            await _context.TempDeviceData.AddRangeAsync(tempDeviceData, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.TempDeviceData.AddRangeAsync(tempDeviceData, cancellationToken).ConfigureAwait(false);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public Task<DateTimeOffset> GetLastUpdateTime(long deviceId, CancellationToken cancellationToken = default)
@@ -110,7 +110,7 @@ namespace VegaIoTApi.Repositories
                 return null;
 
             _context.TempDeviceData.Remove(vegaTempDevice);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
             return vegaTempDevice;
         }

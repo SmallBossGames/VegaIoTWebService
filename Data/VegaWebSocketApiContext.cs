@@ -61,8 +61,10 @@ namespace VegaIoTWebService.Data
             CancellationToken cancellationToken,
             int reciveBufferSize = 4096)
         {
-            await Connection(cancellationToken);
-            return await WebSocketRequest<TRequest, TResponse>(request, cancellationToken, reciveBufferSize);
+            await Connection(cancellationToken).ConfigureAwait(false);
+
+            return await WebSocketRequest<TRequest, TResponse>
+                (request, cancellationToken, reciveBufferSize).ConfigureAwait(false);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -88,18 +90,19 @@ namespace VegaIoTWebService.Data
 
         private async Task OpenBehaveur(CancellationToken cancellationToken)
         {
-            if (!await PingAsync(cancellationToken))
+            if (!await PingAsync(cancellationToken).ConfigureAwait(false))
             {
                 socket.Abort();
-                await socket.ConnectAsync(connectionUri, cancellationToken);
-                if (socket.State != WebSocketState.Open || !await PingAsync(cancellationToken))
+                await socket.ConnectAsync(connectionUri, cancellationToken)
+                    .ConfigureAwait(false);
+                if (socket.State != WebSocketState.Open || !await PingAsync(cancellationToken).ConfigureAwait(false))
                     throw new InvalidOperationException();
             }
 
-            if (await FastConnectionRecover(cancellationToken))
+            if (await FastConnectionRecover(cancellationToken).ConfigureAwait(false))
                 return;
 
-            if (await SetupConnection(cancellationToken))
+            if (await SetupConnection(cancellationToken).ConfigureAwait(false))
                 return;
 
             throw new InvalidOperationException();
@@ -107,12 +110,12 @@ namespace VegaIoTWebService.Data
 
         private async Task ClosedBehaveur(CancellationToken cancellationToken)
         {
-            await socket.ConnectAsync(connectionUri, cancellationToken);
+            await socket.ConnectAsync(connectionUri, cancellationToken).ConfigureAwait(false);
 
-            if (socket.State != WebSocketState.Open || !await PingAsync(cancellationToken))
+            if (socket.State != WebSocketState.Open || !await PingAsync(cancellationToken).ConfigureAwait(false))
                 throw new InvalidOperationException();
 
-            if (await SetupConnection(cancellationToken))
+            if (await SetupConnection(cancellationToken).ConfigureAwait(false))
                 return;
 
             throw new InvalidOperationException();
@@ -129,7 +132,8 @@ namespace VegaIoTWebService.Data
                 Password = password,
             };
 
-            var responce = await WebSocketRequest<AuthenticationReq, AuthenticationResp>(request, cancellationToken);
+            var responce = await WebSocketRequest<AuthenticationReq, AuthenticationResp>
+                (request, cancellationToken).ConfigureAwait(false);
 
             if (responce.Cmd == "auth_resp" && responce.Status == true && !string.IsNullOrEmpty(responce.Token))
             {
@@ -145,7 +149,9 @@ namespace VegaIoTWebService.Data
             try
             {
                 var pingReq = new PingModel() { Cmd = "ping_req" };
-                var result = await WebSocketRequest<PingModel, PingModel>(pingReq, cancellationToken);
+                var result = await WebSocketRequest<PingModel, PingModel>(pingReq, cancellationToken)
+                    .ConfigureAwait(false);
+
                 return result.Cmd == "ping_resp";
             }
             catch (InvalidOperationException)
@@ -163,7 +169,10 @@ namespace VegaIoTWebService.Data
             {
                 Token = connectionToken
             };
-            var result = await WebSocketRequest<TokenAuthReq, TokenAuthResp>(request, cancellationToken);
+
+            var result = await WebSocketRequest<TokenAuthReq, TokenAuthResp>
+                (request, cancellationToken).ConfigureAwait(false);
+
             if (result.Status == true && result.Cmd == "token_auth_resp")
             {
                 connectionToken = result.Token;
@@ -181,8 +190,11 @@ namespace VegaIoTWebService.Data
             var requestBytes = JsonSerializer.SerializeToUtf8Bytes(request);
             var reciveBytes = new byte[reciveBufferSize];
 
-            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken);
-            var receiveResult = await socket.ReceiveAsync(reciveBytes, cancellationToken);
+            await socket.SendAsync(requestBytes, WebSocketMessageType.Text, true, cancellationToken)
+                .ConfigureAwait(false);
+           
+            var receiveResult = await socket.ReceiveAsync(reciveBytes, cancellationToken)
+                .ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<TResponse>(reciveBytes[..receiveResult.Count]);
         }

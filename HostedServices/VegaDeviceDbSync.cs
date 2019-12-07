@@ -46,16 +46,19 @@ namespace VegaIoTWebService.HostedServices
             var deviceRepository = scope.ServiceProvider.GetRequiredService<IDeviceRepository>();
             var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
 
-            var devices = await deviceRepository.GetDevicesAsync(_cancellationToken);
+            var devices = await deviceRepository.GetDevicesAsync(_cancellationToken).ConfigureAwait(false);
 
             foreach (var item in devices)
             {
-                var lastUpdateTime = await dataRepository.GetLastUpdateTime(item.Id, _cancellationToken);
+                var lastUpdateTime = await dataRepository
+                    .GetLastUpdateTime(item.Id, _cancellationToken)
+                    .ConfigureAwait(false);
 
                 var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync
-                    (item.Eui, item.Id, lastUpdateTime, _cancellationToken);
+                    (item.Eui, item.Id, lastUpdateTime, _cancellationToken).ConfigureAwait(false);
 
-                await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken);
+                await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                    .ConfigureAwait(false);
             }
         }
 

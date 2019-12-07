@@ -29,7 +29,10 @@ namespace VegaIoTApi.Controllers.Version1.Vega
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]AuthenticationReq requestModel)
         {
-            return Ok(await _communicator.AuthenticateAsync(requestModel, CancellationToken.None));
+            var result = await _communicator
+                .AuthenticateAsync(requestModel, CancellationToken.None).ConfigureAwait(false);
+
+            return Ok(result);
         }
     }
 }

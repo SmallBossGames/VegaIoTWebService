@@ -22,14 +22,14 @@ namespace VegaIoTApi.Controllers.v001.Device
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VegaTempDevice>>> GetDeviceAsync()
         {
-            return await _repository.GetDevicesAsync();
+            return await _repository.GetDevicesAsync().ConfigureAwait(false);
         }
 
         // GET: api/VegaTempDevices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaTempDevice>> GetDeviceAsync(long id)
         {
-            var vegaTempDevice = await _repository.GetDeviceAsync(id);
+            var vegaTempDevice = await _repository.GetDeviceAsync(id).ConfigureAwait(false);
 
             if (vegaTempDevice == null) return NotFound();
 
@@ -42,6 +42,11 @@ namespace VegaIoTApi.Controllers.v001.Device
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDeviceAsync(long id, VegaTempDevice vegaTempDevice)
         {
+            if (vegaTempDevice is null)
+            {
+                throw new System.ArgumentNullException(nameof(vegaTempDevice));
+            }
+
             if (id != vegaTempDevice.Id)
             {
                 return BadRequest();
@@ -49,7 +54,7 @@ namespace VegaIoTApi.Controllers.v001.Device
 
             try
             {
-                await _repository.EditDeviceAsync(vegaTempDevice);
+                await _repository.EditDeviceAsync(vegaTempDevice).ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -72,9 +77,14 @@ namespace VegaIoTApi.Controllers.v001.Device
         [HttpPost]
         public async Task<ActionResult<VegaTempDevice>> PostDeviceAsync(VegaTempDevice vegaTempDevice)
         {
+            if (vegaTempDevice is null)
+            {
+                throw new System.ArgumentNullException(nameof(vegaTempDevice));
+            }
+
             try
             {
-                await _repository.AddDeviceAsync(vegaTempDevice);
+                await _repository.AddDeviceAsync(vegaTempDevice).ConfigureAwait(false);
             }
             catch (DbUpdateException)
             {
@@ -95,7 +105,7 @@ namespace VegaIoTApi.Controllers.v001.Device
         [HttpDelete("{id}")]
         public async Task<ActionResult<VegaTempDevice?>> DeleteDeviceAsync(long id)
         {
-            var result = await _repository.DeleteDeviceAsync(id);
+            var result = await _repository.DeleteDeviceAsync(id).ConfigureAwait(false);
             if (result == null)
             {
                 return NotFound();

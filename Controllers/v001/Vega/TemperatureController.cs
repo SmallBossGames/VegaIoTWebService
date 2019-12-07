@@ -35,7 +35,7 @@ namespace VegaIoTApi.Controllers.Version1.Vega
                 }
             };
 
-            var result = await _communiactor.GetDeviceDataAsync(request, CancellationToken.None);
+            var result = await _communiactor.GetDeviceDataAsync(request, CancellationToken.None).ConfigureAwait(false);
 
             var list = new List<DeviceTDModel>();
 

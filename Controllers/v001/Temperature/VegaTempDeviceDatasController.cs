@@ -26,13 +26,13 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync()
         {
-            return await _repository.GetAllAsync();
+            return await _repository.GetAllAsync().ConfigureAwait(false);
         }
 
         [HttpGet("all/{deviceId}")]
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync(long deviceId)
         {
-            var result = await _repository.GetAllAsync(deviceId);
+            var result = await _repository.GetAllAsync(deviceId).ConfigureAwait(false);
 
             if (result == null)
                 return NotFound();
@@ -44,7 +44,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpGet("current/{deviceId}")]
         public async Task<ActionResult<VegaTempDeviceData>> GetCurrentAsync(long deviceId)
         {
-            var vegaTempDeviceData = await _repository.GetCurrentAsync(deviceId);
+            var vegaTempDeviceData = await _repository.GetCurrentAsync(deviceId).ConfigureAwait(false);
 
             if (vegaTempDeviceData == null)
                 return NotFound();
@@ -55,13 +55,13 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpGet("current")]
         public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetCurrentAsync()
         {
-            return await _repository.GetCurrentAsync();
+            return await _repository.GetCurrentAsync().ConfigureAwait(false);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaTempDeviceData>> GetAsync(long id)
         {
-            var vegaTempDeviceData = await _repository.GetDataAsync(id);
+            var vegaTempDeviceData = await _repository.GetDataAsync(id).ConfigureAwait(false);
 
             if (vegaTempDeviceData == null)
                 return NotFound();
@@ -75,12 +75,17 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVegaTempDeviceData(long id, VegaTempDeviceData tempDeviceData)
         {
+            if (tempDeviceData is null)
+            {
+                throw new ArgumentNullException(nameof(tempDeviceData));
+            }
+
             if (id != tempDeviceData.Id || !_repository.TempDeviceExists(tempDeviceData.DeviceId))
                 return BadRequest();
 
             try
             {
-                await _repository.EditTempDeviceDataAsync(tempDeviceData);
+                await _repository.EditTempDeviceDataAsync(tempDeviceData).ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -98,10 +103,15 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpPost]
         public async Task<ActionResult<VegaTempDeviceData>> PostVegaTempDeviceData(VegaTempDeviceData tempDeviceData)
         {
+            if (tempDeviceData is null)
+            {
+                throw new ArgumentNullException(nameof(tempDeviceData));
+            }
+
             if (!_repository.TempDeviceExists(tempDeviceData.DeviceId))
                 return BadRequest();
 
-            await _repository.AddTempDeviceDataAsync(tempDeviceData);
+            await _repository.AddTempDeviceDataAsync(tempDeviceData).ConfigureAwait(false);
 
             return CreatedAtAction("GetTempDeviceData", new { id = tempDeviceData.Id }, tempDeviceData);
         }
@@ -110,7 +120,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpDelete("{id}")]
         public async Task<ActionResult<VegaTempDeviceData>> DeleteVegaTempDeviceData(long id)
         {
-            var result = await _repository.DeleteVegaTempDeviceData(id);
+            var result = await _repository.DeleteVegaTempDeviceData(id).ConfigureAwait(false);
 
             if (result == null)
                 return NotFound();

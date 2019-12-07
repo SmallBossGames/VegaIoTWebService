@@ -159,6 +159,11 @@ namespace VegaIoTApi.Data
 
         public override bool ContainsKey(string keyword)
         {
+            if (keyword is null)
+            {
+                throw new ArgumentNullException(nameof(keyword));
+            }
+
             return base.ContainsKey(keyword.ToLower());
         }
 

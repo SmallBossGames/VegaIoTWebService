@@ -21,12 +21,13 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetAllAsync() => await _repository.GetAllAsync();
+        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetAllAsync()
+            => await _repository.GetAllAsync().ConfigureAwait(false);
 
         [HttpGet("all/{deviceId}")]
         public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetAllAsync(long deviceId)
         {
-            var result = await _repository.GetAllAsync(deviceId);
+            var result = await _repository.GetAllAsync(deviceId).ConfigureAwait(false);
 
             if (result == null) return NotFound();
 
@@ -36,7 +37,7 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         [HttpGet("current/{deviceId}")]
         public async Task<ActionResult<VegaMagnetDeviceData>> GetCurrentAsync(long deviceId)
         {
-            var result = await _repository.GetCurrentAsync(deviceId);
+            var result = await _repository.GetCurrentAsync(deviceId).ConfigureAwait(false);
 
             if (result == null) return NotFound();
 
@@ -44,12 +45,13 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         }
 
         [HttpGet("current")]
-        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetCurrentAsync() => await _repository.GetCurrentAsync();
+        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetCurrentAsync() 
+            => await _repository.GetCurrentAsync().ConfigureAwait(false);
 
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaMagnetDeviceData>> GetAsync(long id)
         {
-            var result = await _repository.GetDataAsync(id);
+            var result = await _repository.GetDataAsync(id).ConfigureAwait(false);
 
             if (result == null) return NotFound();
 
@@ -59,11 +61,18 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVegaMagnetDeviceData(long id, VegaMagnetDeviceData vegaMagnetDeviceData)
         {
-            if (id != vegaMagnetDeviceData.Id || !_repository.MagnetDeviceExists(vegaMagnetDeviceData.Id)) return BadRequest();
+            if (vegaMagnetDeviceData is null)
+            {
+                throw new ArgumentNullException(nameof(vegaMagnetDeviceData));
+            }
+
+            if (id != vegaMagnetDeviceData.Id || !_repository.MagnetDeviceExists(vegaMagnetDeviceData.Id)) 
+                return BadRequest();
+            
 
             try
             {
-                await _repository.EditVegaDeviceDataAsync(vegaMagnetDeviceData);
+                await _repository.EditVegaDeviceDataAsync(vegaMagnetDeviceData).ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -77,9 +86,14 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         [HttpPost]
         public async Task<ActionResult<VegaMagnetDeviceData>> PostVegaMagnetDeviceData(VegaMagnetDeviceData vegaMagnetDeviceData)
         {
+            if (vegaMagnetDeviceData is null)
+            {
+                throw new ArgumentNullException(nameof(vegaMagnetDeviceData));
+            }
+
             if (!_repository.MagnetDeviceExists(vegaMagnetDeviceData.Id)) return BadRequest();
 
-            await _repository.AddVegaMagnetDeviceDataAsync(vegaMagnetDeviceData);
+            await _repository.AddVegaMagnetDeviceDataAsync(vegaMagnetDeviceData).ConfigureAwait(false);
 
             return CreatedAtAction("GetMagnetDeviceData", new { id = vegaMagnetDeviceData.Id }, vegaMagnetDeviceData);
         }
@@ -87,7 +101,7 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         [HttpDelete("{id}")]
         public async Task<ActionResult<VegaMagnetDeviceData>> DeleteVegaMagnetDeviceData(long id)
         {
-            var result = await _repository.DeleteVegaMagnetDeviceData(id);
+            var result = await _repository.DeleteVegaMagnetDeviceData(id).ConfigureAwait(false);
 
             if (result == null) return NotFound();
 

@@ -21,6 +21,11 @@ namespace VegaIoTWebService.Data.Models
 
         public static VegaMagnetDeviceData Parse(string source)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             const int byteSize = 11;
             const int charSpanSize = byteSize * 2;
 

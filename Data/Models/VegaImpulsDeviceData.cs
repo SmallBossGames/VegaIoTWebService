@@ -24,6 +24,11 @@ namespace VegaIoTWebService.Data.Models
 
         public static VegaImpulsDeviceData Parse(string source)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             const int byteSize = 24;
             const int charSpanSize = byteSize * 2;
 
@@ -61,6 +66,11 @@ namespace VegaIoTWebService.Data.Models
 
         public static VegaImpulsDeviceData ParseAlarm(string source)
         {
+            if (source is null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
             const int byteSize = 24;
             const int charSpanSize = byteSize * 2;
 
