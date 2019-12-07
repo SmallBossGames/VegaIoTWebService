@@ -3,28 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using VegaIoTApi.Data;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Repositories
 {
     public class MovingDeviceDataRepository : IMovingDeviceDataRepository
     {
-        public Task AddVegaMovingDeviceDataAsync(IEnumerable<VegaMoveDeviceData> moveDeviceData, CancellationToken cancellationToken = default)
+        readonly VegaApiDBContext _context;
+
+        public MovingDeviceDataRepository(VegaApiDBContext context)
+        {
+            _context = context;
+        }
+        public async Task AddVegaMovingDeviceDataAsync(IEnumerable<VegaMoveDeviceData> moveDeviceData, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<VegaMoveDeviceData> AddVegaMovingDeviceDataAsync(VegaMoveDeviceData moveDeviceData, CancellationToken cancellationToken = default)
+        public async Task<VegaMoveDeviceData> AddVegaMovingDeviceDataAsync(VegaMoveDeviceData moveDeviceData, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<VegaMoveDeviceData?> DeleteVegaMovingDeviceData(long id, CancellationToken cancellationToken = default)
+        public async Task<VegaMoveDeviceData?> DeleteVegaMovingDeviceData(long id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task EditVegaDeviceDataAsync(VegaMoveDeviceData vegaMoveDeviceData, CancellationToken cancellationToken = default)
+        public async Task EditVegaDeviceDataAsync(VegaMoveDeviceData vegaMoveDeviceData, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
@@ -49,7 +56,7 @@ namespace VegaIoTApi.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<VegaMoveDeviceData?> GetDataAsync(long id, CancellationToken cancellationToken = default)
+        public async Task<VegaMoveDeviceData?> GetDataAsync(long id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }

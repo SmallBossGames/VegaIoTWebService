@@ -21,10 +21,7 @@ namespace VegaIoTApi.Controllers.v001.Moving
         }
 
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync()
-        {
-            return await _repository.GetAllAsync();
-        }
+        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync() => await _repository.GetAllAsync();
 
         [HttpGet("all/{deviceId}")]
         public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync(long deviceId)
