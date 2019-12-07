@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VegaIoTApi.Data;
-using VegaIoTApi.Repositories;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Controllers.v001.Temperature

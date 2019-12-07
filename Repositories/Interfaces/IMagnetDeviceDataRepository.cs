@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTWebService.Data.Models;
 
-namespace VegaIoTApi.Repositories
+namespace VegaIoTApi.Repositories.Interfaces
 {
     public interface IMagnetDeviceDataRepository
     {

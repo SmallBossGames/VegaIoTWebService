@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VegaIoTApi.AppServices;
-using VegaIoTApi.Repositories;
+using VegaIoTApi.Repositories.Interfaces;
 
 namespace VegaIoTWebService.HostedServices
 {
@@ -43,10 +43,10 @@ namespace VegaIoTWebService.HostedServices
         {
             using var scope = serviceScopeFactory.CreateScope();
 
-            var deviceRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceRepository>();
+            var deviceRepository = scope.ServiceProvider.GetRequiredService<IDeviceRepository>();
             var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
 
-            var devices = await deviceRepository.GetTempDevicesAsync(_cancellationToken);
+            var devices = await deviceRepository.GetDevicesAsync(_cancellationToken);
 
             foreach (var item in devices)
             {

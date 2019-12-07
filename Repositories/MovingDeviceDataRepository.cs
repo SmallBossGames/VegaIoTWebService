@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.Data;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Repositories

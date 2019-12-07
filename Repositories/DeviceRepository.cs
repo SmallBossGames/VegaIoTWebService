@@ -4,44 +4,45 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using VegaIoTApi.Data;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Repositories
 {
-    public class TemperatureDeviceRepository : ITemperatureDeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly VegaApiDBContext _context;
 
-        public TemperatureDeviceRepository(VegaApiDBContext context)
+        public DeviceRepository(VegaApiDBContext context)
         {
             _context = context;
         }
 
-        public Task<List<VegaTempDevice>> GetTempDevicesAsync(CancellationToken token = default)
+        public Task<List<VegaTempDevice>> GetDevicesAsync(CancellationToken token = default)
         {
             return _context.TempDevices.ToListAsync(token);
         }
 
-        public async Task<VegaTempDevice?> GetTempDeviceAsync(long id, CancellationToken token = default)
+        public async Task<VegaTempDevice?> GetDeviceAsync(long id, CancellationToken token = default)
         {
             var vegaTempDevice = await _context.TempDevices.FindAsync(new object[] { id }, token);
             return vegaTempDevice;
         }
 
-        public async Task EditTempDeviceAsync(VegaTempDevice vegaTempDevice, CancellationToken token = default)
+        public async Task EditDeviceAsync(VegaTempDevice vegaTempDevice, CancellationToken token = default)
         {
             _context.Entry(vegaTempDevice).State = EntityState.Modified;
             await _context.SaveChangesAsync(token);
         }
 
-        public async Task<VegaTempDevice> AddTempDeviceAsync(VegaTempDevice tempDevice, CancellationToken token = default)
+        public async Task<VegaTempDevice> AddDeviceAsync(VegaTempDevice tempDevice, CancellationToken token = default)
         {
             _context.TempDevices.Add(tempDevice);
             await _context.SaveChangesAsync(token);
             return tempDevice;
         }
 
-        public async Task<VegaTempDevice?> DeleteVegaTempDevice(long id, CancellationToken token = default)
+        public async Task<VegaTempDevice?> DeleteDeviceAsync(long id, CancellationToken token = default)
         {
             var vegaTempDevice = await _context.TempDevices.FindAsync(new object[] { id }, token);
 
@@ -54,7 +55,7 @@ namespace VegaIoTApi.Repositories
             return vegaTempDevice;
         }
 
-        public bool TempDeviceExists(long id)
+        public bool DeviceExists(long id)
         {
             return _context.TempDevices.Any(e => e.Id == id);
         }

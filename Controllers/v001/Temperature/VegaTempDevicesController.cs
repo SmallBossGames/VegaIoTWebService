@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VegaIoTApi.Repositories;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Controllers.v001.Temperature
@@ -11,9 +11,9 @@ namespace VegaIoTApi.Controllers.v001.Temperature
     [ApiController]
     public class VegaTempDevicesController : ControllerBase
     {
-        private readonly ITemperatureDeviceRepository _repository;
+        private readonly IDeviceRepository _repository;
 
-        public VegaTempDevicesController(ITemperatureDeviceRepository repository)
+        public VegaTempDevicesController(IDeviceRepository repository)
         {
             _repository = repository;
         }
@@ -22,14 +22,14 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VegaTempDevice>>> GetTempDevices()
         {
-            return await _repository.GetTempDevicesAsync();
+            return await _repository.GetDevicesAsync();
         }
 
         // GET: api/VegaTempDevices/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaTempDevice>> GetVegaTempDevice(long id)
         {
-            var vegaTempDevice = await _repository.GetTempDeviceAsync(id);
+            var vegaTempDevice = await _repository.GetDeviceAsync(id);
 
             if (vegaTempDevice == null) return NotFound();
 
@@ -49,11 +49,11 @@ namespace VegaIoTApi.Controllers.v001.Temperature
 
             try
             {
-                await _repository.EditTempDeviceAsync(vegaTempDevice);
+                await _repository.EditDeviceAsync(vegaTempDevice);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_repository.TempDeviceExists(id))
+                if (!_repository.DeviceExists(id))
                 {
                     return NotFound();
                 }
@@ -74,11 +74,11 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         {
             try
             {
-                await _repository.AddTempDeviceAsync(vegaTempDevice);
+                await _repository.AddDeviceAsync(vegaTempDevice);
             }
             catch (DbUpdateException)
             {
-                if (_repository.TempDeviceExists(vegaTempDevice.Id))
+                if (_repository.DeviceExists(vegaTempDevice.Id))
                 {
                     return Conflict();
                 }
@@ -95,7 +95,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpDelete("{id}")]
         public async Task<ActionResult<VegaTempDevice?>> DeleteVegaTempDevice(long id)
         {
-            var result = await _repository.DeleteVegaTempDevice(id);
+            var result = await _repository.DeleteDeviceAsync(id);
             if (result == null)
             {
                 return NotFound();

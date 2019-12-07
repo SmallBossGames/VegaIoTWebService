@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using VegaIoTApi.AppServices;
 using VegaIoTApi.Data;
 using VegaIoTApi.Repositories;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.HostedServices;
 
 namespace VegaIoTApi
@@ -33,7 +34,7 @@ namespace VegaIoTApi
 
         public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
-            services.AddScoped<ITemperatureDeviceRepository, TemperatureDeviceRepository>();
+            services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<ITemperatureDeviceDataRepository, TemperatureDeviceDataRepository>();
             return services;
         }

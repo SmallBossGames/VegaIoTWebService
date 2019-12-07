@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using VegaIoTApi.Repositories;
+using VegaIoTApi.Repositories.Interfaces;
 using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Controllers.v001.Moving
