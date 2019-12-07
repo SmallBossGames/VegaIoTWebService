@@ -20,4 +20,9 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\v001\Magnet\" />
+    <Folder Include="Controllers\v001\Impuls\" />
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using VegaIoTApi.Data;
 using VegaIoTApi.Repositories;
 using VegaIoTWebService.Data.Models;
 
@@ -35,10 +31,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         {
             var vegaTempDevice = await _repository.GetTempDeviceAsync(id);
 
-            if (vegaTempDevice == null)
-            {
-                return NotFound();
-            }
+            if (vegaTempDevice == null) return NotFound();
 
             return vegaTempDevice;
         }
