@@ -3,7 +3,7 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 COPY *.csproj .
-RUN dotnet restore
+RUN dotnet restore -c Release
 
 # copy everything else and build app
 COPY . .
