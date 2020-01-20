@@ -10,7 +10,7 @@ using VegaIoTWebService.Data.Models;
 namespace VegaIoTApi.AppServices
 {
     /// <summary>
-    /// Связь с вегой через веб-сокеты
+    /// пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public class VegaApiCommunicator : IVegaApiCommunicator
     {
@@ -70,10 +70,27 @@ namespace VegaIoTApi.AppServices
                 .ConfigureAwait(false);
 
             var receiveResult = await socket
-                .ReceiveAsync(receiveBytes, cancellationToken)
+                .ReceiveAsync(receiveBytes.AsMemory(), cancellationToken)
                 .ConfigureAwait(false);
 
-            return JsonSerializer.Deserialize<TResponse>(receiveBytes[..receiveResult.Count]);
+            var fullLength = receiveResult.Count;
+
+            while(!receiveResult.EndOfMessage)
+            {
+                var position = receiveBytes.Length;
+                
+                Array.Resize(ref receiveBytes, receiveBytes.Length * 2);
+
+                var slice = receiveBytes.AsMemory();
+                
+                receiveResult = await socket
+                    .ReceiveAsync(slice[position..], cancellationToken)
+                    .ConfigureAwait(false);
+
+                fullLength += receiveResult.Count;
+            }
+
+            return JsonSerializer.Deserialize<TResponse>(receiveBytes[..fullLength]);
         }
 
         public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
@@ -142,7 +159,7 @@ namespace VegaIoTApi.AppServices
                 if (a.Type == "UNCONF_UP" && a.Data.Length >= 20)
                 {
                     var processed = VegaMoveDeviceData.Parse(a.Data);
-                    processed.DeviceId = deviceId; // сделать запись в БД только при условии, что датчик менял своё состояние?
+                    processed.DeviceId = deviceId; // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ?
                     list.AddLast(processed);
                 }
             }
@@ -183,13 +200,13 @@ namespace VegaIoTApi.AppServices
         public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync
             (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
-            // возможно, нужна перепись этой и других функций под нужную конечную логику
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             var request = new DeviceDataReq()
             {
                 DevEui = eui,
                 Select = new DeviceDataReq.SelectModel()
                 {
-                    Direction = "UPLINK", // проверить по апи датчика СИ-11
+                    Direction = "UPLINK", // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ-11
                     DateFrom = from.ToUnixTimeMilliseconds(),
                 }
             };
