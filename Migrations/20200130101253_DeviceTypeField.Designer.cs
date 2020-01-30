@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VegaIoTApi.Data;
@@ -9,9 +10,10 @@ using VegaIoTApi.Data;
 namespace VegaIoTApi.Migrations
 {
     [DbContext(typeof(VegaApiDBContext))]
-    partial class VegaApiDBContextModelSnapshot : ModelSnapshot
+    [Migration("20200130101253_DeviceTypeField")]
+    partial class DeviceTypeField
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,35 +44,6 @@ namespace VegaIoTApi.Migrations
                     b.HasIndex("Eui");
 
                     b.ToTable("TempDevices");
-                });
-
-            modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaMoveDeviceData", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<short>("BatteryLevel")
-                        .HasColumnType("smallint");
-
-                    b.Property<long>("DeviceId")
-                        .HasColumnType("bigint");
-
-                    b.Property<short>("Reason")
-                        .HasColumnType("smallint");
-
-                    b.Property<double>("Temperature")
-                        .HasColumnType("double precision");
-
-                    b.Property<DateTimeOffset>("Uptime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("MoveDeviceDatas");
                 });
 
             modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaTempDeviceData", b =>
@@ -106,15 +79,6 @@ namespace VegaIoTApi.Migrations
                     b.HasIndex("DeviceId");
 
                     b.ToTable("TempDeviceData");
-                });
-
-            modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaMoveDeviceData", b =>
-                {
-                    b.HasOne("VegaIoTWebService.Data.Models.VegaDevice", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("VegaIoTWebService.Data.Models.VegaTempDeviceData", b =>

@@ -20,89 +20,115 @@ namespace VegaIoTApi.Controllers.v001.Moving
             _repository = repository;
         }
 
+        // GET: api/VegaTempDeviceDatas
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync() => 
-            await _repository.GetAllAsync().ConfigureAwait(false);
-
-        [HttpGet("all/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync(long deviceId)
+        public Task<IEnumerable<VegaMoveDeviceData>> GetAllAsync()
         {
-            var result = await _repository.GetAllAsync(deviceId).ConfigureAwait(false);
-
-            if (result == null) return NotFound();
-
-            return result;
+            return _repository.GetAllAsync();
         }
 
+        [HttpGet("all/{deviceId}")]
+        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetAllAsync
+            (long deviceId, [FromQuery]int startIndex = 0, [FromQuery]int limit = int.MaxValue)
+        {
+            var result = await _repository.GetAllAsync(deviceId, startIndex, limit).ConfigureAwait(false);
+
+            if (result == null)
+                return NotFound();
+
+            return Ok(result);
+        }
+
+        // GET: api/VegaTempDeviceDatas/5
         [HttpGet("current/{deviceId}")]
         public async Task<ActionResult<VegaMoveDeviceData>> GetCurrentAsync(long deviceId)
         {
-            var result = await _repository.GetCurrentAsync(deviceId).ConfigureAwait(false);
+            var vegaTempDeviceData = await _repository.GetCurrentAsync(deviceId).ConfigureAwait(false);
 
-            if (result == null) return NotFound();
+            if (vegaTempDeviceData == null)
+                return NotFound();
 
-            return result;
+            return vegaTempDeviceData;
         }
 
         [HttpGet("current")]
-        public async Task<ActionResult<IEnumerable<VegaMoveDeviceData>>> GetCurrentAsync() 
-            => await _repository.GetCurrentAsync().ConfigureAwait(false);
+        public Task<IEnumerable<VegaMoveDeviceData>> GetCurrentAsync()
+        {
+            return _repository.GetCurrentAsync();
+        }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaMoveDeviceData>> GetAsync(long id)
         {
-            var result = await _repository.GetDataAsync(id).ConfigureAwait(false);
+            var vegaTempDeviceData = await _repository
+                .GetDataAsync(id)
+                .ConfigureAwait(false);
 
-            if (result == null) return NotFound();
+            if (vegaTempDeviceData == null)
+                return NotFound();
 
-            return result;
+            return vegaTempDeviceData;
         }
 
+        // PUT: api/VegaTempDeviceDatas/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutVegaMoveDeviceData(long id, VegaMoveDeviceData vegaMoveDeviceData)
+        public async Task<IActionResult> PutVegaTempDeviceData(long id, VegaMoveDeviceData tempDeviceData)
         {
-            if (vegaMoveDeviceData is null)
+            if (tempDeviceData is null)
             {
-                throw new ArgumentNullException(nameof(vegaMoveDeviceData));
+                return BadRequest();
             }
 
-            if (id != vegaMoveDeviceData.Id || !_repository.MoveDeviceExists(vegaMoveDeviceData.Id)) 
+            if (id != tempDeviceData.Id || !_repository.DeviceExists(tempDeviceData.DeviceId))
                 return BadRequest();
-            
+
             try
             {
-                await _repository.EditVegaDeviceDataAsync(vegaMoveDeviceData).ConfigureAwait(false);
+                await _repository.EditVegaDeviceDataAsync(tempDeviceData).ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_repository.MoveDeviceDataExists(id)) return NotFound();
+                if (!_repository.MoveDeviceDataExists(id))
+                    return NotFound();
                 else throw;
             }
 
             return NoContent();
         }
 
+        // POST: api/VegaTempDeviceDatas
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
+        // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<VegaMoveDeviceData>> PostVegaMoveDeviceData(VegaMoveDeviceData vegaMoveDeviceData)
+        public async Task<ActionResult<VegaMoveDeviceData>> PostVegaTempDeviceData(VegaMoveDeviceData tempDeviceData)
         {
-            if (vegaMoveDeviceData is null)
+            if (tempDeviceData is null)
             {
-                throw new ArgumentNullException(nameof(vegaMoveDeviceData));
+                throw new ArgumentNullException(nameof(tempDeviceData));
             }
 
-            if (!_repository.MoveDeviceExists(vegaMoveDeviceData.Id)) return BadRequest();
+            if (!_repository.DeviceExists(tempDeviceData.DeviceId))
+                return BadRequest();
 
-            await _repository.AddVegaMovingDeviceDataAsync(vegaMoveDeviceData).ConfigureAwait(false);
+            await _repository
+                .AddVegaMovingDeviceDataAsync(tempDeviceData)
+                .ConfigureAwait(false);
 
-            return CreatedAtAction("GetMoveDeviceData", new { id = vegaMoveDeviceData.Id }, vegaMoveDeviceData);
+            return CreatedAtAction("GetTempDeviceData", new { id = tempDeviceData.Id }, tempDeviceData);
         }
 
+        // DELETE: api/VegaTempDeviceDatas/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VegaMoveDeviceData>> DeleteVegaMoveDeviceData(long id)
+        public async Task<ActionResult<VegaMoveDeviceData>> DeleteVegaTempDeviceData(long id)
         {
-            var result = await _repository.DeleteVegaMovingDeviceData(id).ConfigureAwait(false);
+            var result = await _repository
+                .DeleteVegaMovingDeviceData(id)
+                .ConfigureAwait(false);
 
-            if (result == null) return NotFound();
+            if (result == null)
+                return NotFound();
 
             return result;
         }

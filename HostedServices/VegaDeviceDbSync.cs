@@ -5,7 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using VegaIoTApi.AppServices;
+using VegaIoTApi.Data.Models;
 using VegaIoTApi.Repositories.Interfaces;
+using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTWebService.HostedServices
 {
@@ -43,23 +45,63 @@ namespace VegaIoTWebService.HostedServices
         {
             using var scope = serviceScopeFactory.CreateScope();
 
-            var deviceRepository = scope.ServiceProvider.GetRequiredService<IDeviceRepository>();
-            var dataRepository = scope.ServiceProvider.GetRequiredService<ITemperatureDeviceDataRepository>();
+            var deviceRepository = scope.ServiceProvider
+                .GetRequiredService<IDeviceRepository>();
 
-            var devices = await deviceRepository.GetDevicesAsync(_cancellationToken).ConfigureAwait(false);
+            var tempDataRepository = scope.ServiceProvider
+                .GetRequiredService<ITemperatureDeviceDataRepository>();
+
+            var moveDataRepository = scope.ServiceProvider
+                .GetRequiredService<IMovingDeviceDataRepository>();
+
+            var devices = await deviceRepository
+                .GetDevicesAsync(_cancellationToken)
+                .ConfigureAwait(false);
 
             foreach (var item in devices)
             {
-                var lastUpdateTime = await dataRepository
-                    .GetLastUpdateTime(item.Id, _cancellationToken)
-                    .ConfigureAwait(false);
-
-                var vegaServerLoadedData = await communicator.GetTemperatureDeviceDatasAsync
-                    (item.Eui, item.Id, lastUpdateTime, _cancellationToken).ConfigureAwait(false);
-
-                await dataRepository.AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
-                    .ConfigureAwait(false);
+                switch(item.DeviceType)
+                {
+                    case DeviceType.Temperature:
+                        await UpdateTemperatureDataAsync(tempDataRepository, item).ConfigureAwait(false);
+                        break;
+                    case DeviceType.Move:
+                        await UpdateMoveDataAsync(moveDataRepository, item).ConfigureAwait(false);
+                        break;
+                    default:
+                        break;
+                };
             }
+        }
+
+        private async Task UpdateTemperatureDataAsync(ITemperatureDeviceDataRepository repository, VegaDevice device)
+        {
+            var lastUpdateTime = await repository
+                .GetLastUpdateTime(device.Id, _cancellationToken)
+                .ConfigureAwait(false);
+
+            var vegaServerLoadedData = await communicator
+                .GetTemperatureDeviceDatasAsync(device.Eui, device.Id, lastUpdateTime, _cancellationToken)
+                .ConfigureAwait(false);
+
+            await repository
+                .AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        private async Task UpdateMoveDataAsync(IMovingDeviceDataRepository repository, VegaDevice device)
+        {
+            var lastUpdateTime = await repository
+                 .GetLastUpdateTime(device.Id, _cancellationToken)
+                 .ConfigureAwait(false);
+
+            var vegaServerLoadedData = await communicator
+                .GetMoveDeviceDataAsync(device.Eui, device.Id, lastUpdateTime, _cancellationToken)
+                .ConfigureAwait(false);
+
+            await repository
+                .AddVegaMovingDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                .ConfigureAwait(false);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

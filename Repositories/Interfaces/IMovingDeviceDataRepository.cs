@@ -13,13 +13,14 @@ namespace VegaIoTApi.Repositories.Interfaces
         Task<VegaMoveDeviceData> AddVegaMovingDeviceDataAsync(VegaMoveDeviceData moveDeviceData, CancellationToken cancellationToken = default);
         Task<VegaMoveDeviceData?> DeleteVegaMovingDeviceData(long id, CancellationToken cancellationToken = default);
         Task EditVegaDeviceDataAsync(VegaMoveDeviceData vegaMoveDeviceData, CancellationToken cancellationToken = default);
-        Task<List<VegaMoveDeviceData>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task<List<VegaMoveDeviceData>?> GetAllAsync(long deviceId, CancellationToken cancellationToken = default);
-        Task<List<VegaMoveDeviceData>> GetCurrentAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<VegaMoveDeviceData>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<IEnumerable<VegaMoveDeviceData>?> GetAllAsync(long deviceId, CancellationToken cancellationToken = default);
+        Task<IEnumerable<VegaMoveDeviceData>?> GetAllAsync(long deviceId, int startIndex, int limit, CancellationToken cancellationToken = default);
+        Task<IEnumerable<VegaMoveDeviceData>> GetCurrentAsync(CancellationToken cancellationToken = default);
         Task<VegaMoveDeviceData?> GetCurrentAsync(long deviceId, CancellationToken cancellationToken = default);
         Task<VegaMoveDeviceData?> GetDataAsync(long id, CancellationToken cancellationToken = default);
         Task<DateTimeOffset> GetLastUpdateTime(long deviceId, CancellationToken cancellationToken = default);
         bool MoveDeviceDataExists(long id);
-        bool MoveDeviceExists(long deviceId);
+        bool DeviceExists(long deviceId);
     }
 }

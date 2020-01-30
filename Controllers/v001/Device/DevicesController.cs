@@ -20,14 +20,14 @@ namespace VegaIoTApi.Controllers.v001.Device
 
         // GET: api/VegaTempDevices
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<VegaTempDevice>>> GetDeviceAsync()
+        public async Task<ActionResult<IEnumerable<VegaDevice>>> GetDeviceAsync()
         {
             return await _repository.GetDevicesAsync().ConfigureAwait(false);
         }
 
         // GET: api/VegaTempDevices/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<VegaTempDevice>> GetDeviceAsync(long id)
+        public async Task<ActionResult<VegaDevice>> GetDeviceAsync(long id)
         {
             var vegaTempDevice = await _repository.GetDeviceAsync(id).ConfigureAwait(false);
 
@@ -40,7 +40,7 @@ namespace VegaIoTApi.Controllers.v001.Device
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDeviceAsync(long id, VegaTempDevice vegaTempDevice)
+        public async Task<IActionResult> PutDeviceAsync(long id, VegaDevice vegaTempDevice)
         {
             if (vegaTempDevice is null)
             {
@@ -75,11 +75,11 @@ namespace VegaIoTApi.Controllers.v001.Device
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<VegaTempDevice>> PostDeviceAsync(VegaTempDevice vegaTempDevice)
+        public async Task<ActionResult<VegaDevice>> PostDeviceAsync(VegaDevice vegaTempDevice)
         {
             if (vegaTempDevice is null)
             {
-                throw new System.ArgumentNullException(nameof(vegaTempDevice));
+                return BadRequest();
             }
 
             try
@@ -98,12 +98,12 @@ namespace VegaIoTApi.Controllers.v001.Device
                 }
             }
 
-            return CreatedAtAction("GetVegaTempDevice", new { id = vegaTempDevice.Id }, vegaTempDevice);
+            return CreatedAtAction("GetDevice", new { id = vegaTempDevice.Id }, vegaTempDevice);
         }
 
         // DELETE: api/VegaTempDevices/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<VegaTempDevice?>> DeleteDeviceAsync(long id)
+        public async Task<ActionResult<VegaDevice?>> DeleteDeviceAsync(long id)
         {
             var result = await _repository.DeleteDeviceAsync(id).ConfigureAwait(false);
             if (result == null)
