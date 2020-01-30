@@ -139,11 +139,14 @@ namespace VegaIoTApi.AppServices
 
             foreach (var a in result.DataList)
             {
-                if (a.Type == "UNCONF_UP" && a.Data.Length >= 20)
+                if (a.Type == "UNCONF_UP" && a.Data.Length == 20 && a.Data[0] == '0' && a.Data[1] == '1')
                 {
                     var processed = VegaMoveDeviceData.Parse(a.Data);
-                    processed.DeviceId = deviceId; // сделать запись в БД только при условии, что датчик менял своё состояние?
-                    list.AddLast(processed);
+                    if (processed.Uptime > from)
+                    {
+                        processed.DeviceId = deviceId;
+                        list.AddLast(processed);
+                    }
                 }
             }
             return list;
