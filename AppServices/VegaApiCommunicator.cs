@@ -70,10 +70,27 @@ namespace VegaIoTApi.AppServices
                 .ConfigureAwait(false);
 
             var receiveResult = await socket
-                .ReceiveAsync(receiveBytes, cancellationToken)
+                .ReceiveAsync(receiveBytes.AsMemory(), cancellationToken)
                 .ConfigureAwait(false);
 
-            return JsonSerializer.Deserialize<TResponse>(receiveBytes[..receiveResult.Count]);
+            var fullLength = receiveResult.Count;
+
+            while (!receiveResult.EndOfMessage)
+            {
+                var position = receiveBytes.Length;
+
+                Array.Resize(ref receiveBytes, receiveBytes.Length * 2);
+
+                var slice = receiveBytes.AsMemory();
+
+                receiveResult = await socket
+                    .ReceiveAsync(slice[position..], cancellationToken)
+                    .ConfigureAwait(false);
+
+                fullLength += receiveResult.Count;
+            }
+
+            return JsonSerializer.Deserialize<TResponse>(receiveBytes[..fullLength]);
         }
 
         public async Task<LinkedList<VegaTempDeviceData>> GetTemperatureDeviceDatasAsync
@@ -122,13 +139,15 @@ namespace VegaIoTApi.AppServices
         public async Task<LinkedList<VegaMoveDeviceData>> GetMoveDeviceDataAsync
             (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
+            var unixTime = from.ToUnixTimeMilliseconds();
+
             var request = new DeviceDataReq()
             {
                 DevEui = eui,
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK",
-                    DateFrom = from.ToUnixTimeMilliseconds(),
+                    DateFrom = unixTime < 0 ? 0 : unixTime,
                 }
             };
 

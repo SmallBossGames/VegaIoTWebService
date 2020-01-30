@@ -7,11 +7,11 @@ namespace VegaIoTApi.Repositories.Interfaces
 {
     public interface IDeviceRepository
     {
-        Task<VegaTempDevice> AddDeviceAsync(VegaTempDevice tempDevice, CancellationToken token = default);
-        Task<VegaTempDevice?> DeleteDeviceAsync(long id, CancellationToken token = default);
-        Task EditDeviceAsync(VegaTempDevice vegaTempDevice, CancellationToken token = default);
-        Task<VegaTempDevice?> GetDeviceAsync(long id, CancellationToken token = default);
-        Task<List<VegaTempDevice>> GetDevicesAsync(CancellationToken token = default);
+        Task<VegaDevice> AddDeviceAsync(VegaDevice tempDevice, CancellationToken token = default);
+        Task<VegaDevice?> DeleteDeviceAsync(long id, CancellationToken token = default);
+        Task EditDeviceAsync(VegaDevice VegaDevice, CancellationToken token = default);
+        Task<VegaDevice?> GetDeviceAsync(long id, CancellationToken token = default);
+        Task<List<VegaDevice>> GetDevicesAsync(CancellationToken token = default);
         bool DeviceExists(long id);
     }
 }

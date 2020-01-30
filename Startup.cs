@@ -34,7 +34,7 @@ namespace VegaIoTApi
                 (options => options.UseHerokuPostgres(Configuration["DATABASE_URL"]));
 #elif DEBUG
             services.AddDbContext<VegaApiDBContext>
-                (options => options.UseHerokuPostgres("postgres://ezmmidgliiyfhn:85d1a46cf86d68be37cd1a5e679d028adb64662dfad31ff9dd23acdcb6b221ae@ec2-23-21-91-183.compute-1.amazonaws.com:5432/dd42vpimo3vofo"));
+                (options => options.UseHerokuPostgres("postgres://sheftlnzdmmxxm:1b76e0908574ffe550c77755774e6557810eb709177d36b4957727e090383d33@ec2-54-75-249-16.eu-west-1.compute.amazonaws.com:5432/d5o96ilgtne8s"));
 #endif
 
             services.AddControllers();

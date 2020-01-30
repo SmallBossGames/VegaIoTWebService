@@ -7,7 +7,7 @@ namespace VegaIoTWebService.Data.Models
     public class VegaTempDeviceData // датчик температуры
     {
         public long Id { get; set; }
-        public VegaTempDevice? Device { get; set; }
+        public VegaDevice? Device { get; set; }
         public long DeviceId { get; set; }
         public short BatteryLevel { get; set; }
         public bool PushTheLimit { get; set; }

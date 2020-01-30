@@ -9,7 +9,7 @@ namespace VegaIoTWebService.Data.Models
     public class VegaMagnetDeviceData // магнитоконтактный датчик
     {
         public long Id { get; set; }
-        public VegaTempDevice? Device { get; set; }
+        public VegaDevice? Device { get; set; }
         public long DeviceId { get; set; }
         public byte PackageType { get; set; }
         public short BatteryLevel { get; set; }
