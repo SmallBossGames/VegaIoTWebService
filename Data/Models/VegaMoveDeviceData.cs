@@ -11,12 +11,11 @@ namespace VegaIoTWebService.Data.Models
         public long Id { get; set; }
         public VegaTempDevice? Device { get; set; }
         public long DeviceId { get; set; }
-        public byte PackageType { get; set; }
-        public short BatteryLevel { get; set; }
-        public byte MainSettings { get; set; }
+        public byte BatteryLevel { get; set; }
+        public byte MainSettingsBits { get; set; }
         public double Temperature { get; set; }
-        public byte SendReason { get; set; }
-        public DateTimeOffset UpTime { get; set; }
+        public byte Reason { get; set; }
+        public DateTimeOffset Uptime { get; set; }
 
         public static VegaMoveDeviceData Parse(string source)
         {
@@ -28,23 +27,26 @@ namespace VegaIoTWebService.Data.Models
             const int byteSize = 10;
             const int charSpanSize = byteSize * 2;
 
-            if (source.Length < charSpanSize) throw new FormatException("Length is too small!");
+            if (source.Length < charSpanSize)
+                throw new FormatException("Length is too small");
 
-            VegaMoveDeviceData device = new VegaMoveDeviceData();
+            var temp = new VegaMoveDeviceData();
 
-            device.PackageType = byte.Parse(source[0..2], NumberStyles.HexNumber);
-            device.BatteryLevel = byte.Parse(source[2..4], NumberStyles.HexNumber);
-            device.MainSettings = byte.Parse(source[4..6], NumberStyles.HexNumber);
+            temp.BatteryLevel = byte.Parse(source[2..4], NumberStyles.HexNumber);
+            temp.MainSettingsBits = byte.Parse(source[4..6], NumberStyles.HexNumber);
 
-            var convertedSourceTemp = Utilits.ConvertHexString(stackalloc byte[2], source[6..10]);
-            device.Temperature = BitConverter.ToInt16(convertedSourceTemp[0..2]) / 10.0;
+            Span<byte> convertedSource = stackalloc byte[7];
+            for (var i = 0; i < convertedSource.Length; i++)
+            {
+                var tempSpan = source.AsSpan(i * 2 + 6, 2);
+                convertedSource[i] = byte.Parse(tempSpan, NumberStyles.HexNumber);
+            }
 
-            device.SendReason = byte.Parse(source[10..12], NumberStyles.HexNumber);
+            temp.Temperature = BitConverter.ToInt16(convertedSource[0..2]) / 10.0;
+            temp.Reason = convertedSource[2];
+            temp.Uptime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToInt32(convertedSource[3..7]));
 
-            var convertedSourceTime = Utilits.ConvertHexString(stackalloc byte[4], source[12..20]);
-            device.UpTime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
-
-            return device;
+            return temp;
         }
     }
 }

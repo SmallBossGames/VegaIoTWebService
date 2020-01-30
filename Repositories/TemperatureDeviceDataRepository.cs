@@ -32,7 +32,28 @@ namespace VegaIoTApi.Repositories
             {
                 return Task.FromResult<List<VegaTempDeviceData>?>(null);
             }
-            return _context.TempDeviceData.Where(x => x.DeviceId == deviceId).ToListAsync(cancellationToken);
+            return _context.TempDeviceData
+                .Where(x => x.DeviceId == deviceId)
+                .OrderBy(x => x.Uptime)
+                .ToListAsync(cancellationToken);
+        }
+
+        public Task<List<VegaTempDeviceData>?> GetAllAsync(long deviceId, int startIndex, int limit, CancellationToken cancellationToken = default)
+        {
+            if (!TempDeviceExists(deviceId))
+            {
+                return Task.FromResult<List<VegaTempDeviceData>?>(null);
+            }
+
+            var query = from data in _context.TempDeviceData
+                        where data.DeviceId == deviceId
+                        orderby data.Uptime descending
+                        select data;
+
+            return query
+                .Skip(startIndex)
+                .Take(limit)
+                .ToListAsync(cancellationToken);
         }
 
         public Task<List<VegaTempDeviceData>> GetCurrentAsync(CancellationToken token = default)

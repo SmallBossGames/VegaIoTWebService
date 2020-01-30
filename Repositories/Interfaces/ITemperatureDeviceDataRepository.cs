@@ -14,6 +14,7 @@ namespace VegaIoTApi.Repositories.Interfaces
         Task EditTempDeviceDataAsync(VegaTempDeviceData tempDeviceData, CancellationToken cancellationToken = default);
         Task<List<VegaTempDeviceData>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<List<VegaTempDeviceData>?> GetAllAsync(long deviceId, CancellationToken cancellationToken = default);
+        Task<List<VegaTempDeviceData>?> GetAllAsync(long deviceId, int startIndex, int limit, CancellationToken cancellationToken = default);
         Task<List<VegaTempDeviceData>> GetCurrentAsync(CancellationToken cancellationToken = default);
         Task<VegaTempDeviceData?> GetCurrentAsync(long deviceId, CancellationToken cancellationToken = default);
         Task<VegaTempDeviceData?> GetDataAsync(long id, CancellationToken cancellationToken = default);

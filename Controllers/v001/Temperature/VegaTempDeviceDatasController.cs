@@ -29,10 +29,22 @@ namespace VegaIoTApi.Controllers.v001.Temperature
             return await _repository.GetAllAsync().ConfigureAwait(false);
         }
 
+        //[HttpGet("all/{deviceId}")]
+        //public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync(long deviceId)
+        //{
+        //    var result = await _repository.GetAllAsync(deviceId).ConfigureAwait(false);
+
+        //    if (result == null)
+        //        return NotFound();
+
+        //    return result;
+        //}
+
         [HttpGet("all/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync(long deviceId)
+        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync
+            (long deviceId, [FromQuery]int startIndex = 0, [FromQuery]int limit = int.MaxValue)
         {
-            var result = await _repository.GetAllAsync(deviceId).ConfigureAwait(false);
+            var result = await _repository.GetAllAsync(deviceId, startIndex, limit).ConfigureAwait(false);
 
             if (result == null)
                 return NotFound();
@@ -61,7 +73,9 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaTempDeviceData>> GetAsync(long id)
         {
-            var vegaTempDeviceData = await _repository.GetDataAsync(id).ConfigureAwait(false);
+            var vegaTempDeviceData = await _repository
+                .GetDataAsync(id)
+                .ConfigureAwait(false);
 
             if (vegaTempDeviceData == null)
                 return NotFound();
