@@ -63,8 +63,8 @@ namespace VegaIoTWebService.Data.Models
 
             return device;
         }
-
-        public static VegaImpulsDeviceData ParseAlarm(string source)
+        
+        /*public static VegaImpulsDeviceData ParseAlarm(string source) // не нужен
         {
             if (source is null)
             {
@@ -104,6 +104,6 @@ namespace VegaIoTWebService.Data.Models
             device.InputState_4 = BitConverter.ToInt16(convertedInputState_4[0..4]);
 
             return device;
-        }
+        }*/
     }
 }

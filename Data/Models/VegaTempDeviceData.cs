@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace VegaIoTWebService.Data.Models
 {
-    public class VegaTempDeviceData // датчик температуры
+    public class VegaTempDeviceData // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     {
         public long Id { get; set; }
         public VegaDevice? Device { get; set; }
