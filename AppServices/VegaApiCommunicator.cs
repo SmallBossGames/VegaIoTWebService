@@ -223,9 +223,15 @@ namespace VegaIoTApi.AppServices
 
             foreach (var a in result.DataList)
             {
-                var processed = VegaImpulsDeviceData.Parse(a.Data);
-                processed.DeviceId = deviceId;
-                list.AddLast(processed);
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 48 && a.Data[0] == '0' && a.Data[1] == '1')
+                {
+                    var processed = VegaImpulsDeviceData.Parse(a.Data);
+                    if (processed.UpTime > from)
+                    {
+                        processed.DeviceId = deviceId;
+                        list.AddLast(processed);
+                    }
+                }
             }
 
             return list;

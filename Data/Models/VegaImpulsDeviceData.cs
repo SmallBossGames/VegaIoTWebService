@@ -32,7 +32,8 @@ namespace VegaIoTWebService.Data.Models
             const int byteSize = 24;
             const int charSpanSize = byteSize * 2;
 
-            if (source.Length < charSpanSize) throw new FormatException("Length is too small!");
+            if (source.Length < charSpanSize) 
+                throw new FormatException("Length is too small!");
 
             VegaImpulsDeviceData device = new VegaImpulsDeviceData();
 
