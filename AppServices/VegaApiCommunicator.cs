@@ -10,7 +10,7 @@ using VegaIoTWebService.Data.Models;
 namespace VegaIoTApi.AppServices
 {
     /// <summary>
-    /// Связь с вегой через веб-сокеты
+    /// пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     public class VegaApiCommunicator : IVegaApiCommunicator
     {
@@ -205,13 +205,13 @@ namespace VegaIoTApi.AppServices
         public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync
             (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
-            // возможно, нужна перепись этой и других функций под нужную конечную логику
+            // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
             var request = new DeviceDataReq()
             {
                 DevEui = eui,
                 Select = new DeviceDataReq.SelectModel()
                 {
-                    Direction = "UPLINK", // проверить по апи датчика СИ-11
+                    Direction = "UPLINK", // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ-11
                     DateFrom = from.ToUnixTimeMilliseconds(),
                 }
             };
