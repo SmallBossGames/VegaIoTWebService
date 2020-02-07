@@ -11,12 +11,12 @@ namespace VegaIoTApi.Repositories
 {
     public class ImpulsDeviceDataRepository : DeviceDataRepositoryBase<VegaImpulsDeviceData>, IImpulsDeviceDataRepository
     {
-        public ImpulsDeviceDataRepository(VegaApiDBContext context)
+        public ImpulsDeviceDataRepository(VegaApiDBContext context) 
             : base(context.ImpulsDeviceDatas, context)
         {
             if (context is null)
             {
-                throw new ArgumentNullException(nameof(context));
+                throw new ArgumentNullException(nameof(context));                
             }
         }
     }
