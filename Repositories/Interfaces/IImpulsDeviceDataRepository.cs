@@ -7,7 +7,7 @@ using VegaIoTWebService.Data.Models;
 
 namespace VegaIoTApi.Repositories.Interfaces
 {
-    interface IImpulsDeviceDataRepository:IDeviceDataRepository<VegaImpulsDeviceData>
+    public interface IImpulsDeviceDataRepository:IDeviceDataRepository<VegaImpulsDeviceData>
     {
     }
 }
