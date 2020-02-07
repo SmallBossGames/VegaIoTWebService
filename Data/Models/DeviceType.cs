@@ -10,5 +10,6 @@ namespace VegaIoTApi.Data.Models
         None = 0,
         Temperature = 1,
         Move = 2,
+        Counter = 3,
     }
 }

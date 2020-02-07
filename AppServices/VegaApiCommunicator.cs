@@ -205,6 +205,7 @@ namespace VegaIoTApi.AppServices
         public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync
             (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
+            var unixTime = from.ToUnixTimeMilliseconds();
             // ��������, ����� �������� ���� � ������ ������� ��� ������ �������� ������
             var request = new DeviceDataReq()
             {
@@ -212,7 +213,7 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK", // ��������� �� ��� ������� ��-11
-                    DateFrom = from.ToUnixTimeMilliseconds(),
+                    DateFrom = unixTime < 0 ? 0 : unixTime,
                 }
             };
 
