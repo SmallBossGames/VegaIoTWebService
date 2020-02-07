@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Globalization;
+using VegaIoTApi.Data.Models.Interfaces;
 
 namespace VegaIoTWebService.Data.Models
 {
-    public class VegaMoveDeviceData // датчик движения
+    public class VegaMoveDeviceData : IDeviceData // датчик движения
     {
         public long Id { get; set; }
         public VegaDevice? Device { get; set; }

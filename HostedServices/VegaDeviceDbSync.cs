@@ -77,7 +77,7 @@ namespace VegaIoTWebService.HostedServices
         private async Task UpdateTemperatureDataAsync(ITemperatureDeviceDataRepository repository, VegaDevice device)
         {
             var lastUpdateTime = await repository
-                .GetLastUpdateTime(device.Id, _cancellationToken)
+                .GetUptimeAsync(device.Id, _cancellationToken)
                 .ConfigureAwait(false);
 
             var vegaServerLoadedData = await communicator
@@ -85,7 +85,7 @@ namespace VegaIoTWebService.HostedServices
                 .ConfigureAwait(false);
 
             await repository
-                .AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                .AddAsync(vegaServerLoadedData, _cancellationToken)
                 .ConfigureAwait(false);
         }
 

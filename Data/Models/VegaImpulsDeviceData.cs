@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Globalization;
+using VegaIoTApi.Data.Models.Interfaces;
 
 namespace VegaIoTWebService.Data.Models
 {
-    public class VegaImpulsDeviceData // счётчик импульсов
+    public class VegaImpulsDeviceData : IDeviceData // счётчик импульсов
     {
         public long Id { get; set; }
         public VegaDevice? Device { get; set; }
@@ -15,7 +16,7 @@ namespace VegaIoTWebService.Data.Models
         public short BatteryLevel { get; set; }
         public byte MainSettings { get; set; }
         public byte AlarmExit { get; set; } // в случае тревоги передаётся другой тип пакета
-        public DateTimeOffset UpTime { get; set; }
+        public DateTimeOffset Uptime { get; set; }
         public double Temperature { get; set; } // температура приходит без умножения на 10 по докам, как на самом деле не знаю
         public long InputState1 { get; set; }
         public long InputState2 { get; set; }
@@ -42,7 +43,7 @@ namespace VegaIoTWebService.Data.Models
             device.MainSettings = byte.Parse(source[4..6], NumberStyles.HexNumber);
 
             var convertedSourceTime = Utilits.ConvertHexString(stackalloc byte[4], source[6..14]);
-            device.UpTime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
+            device.Uptime = DateTimeOffset.FromUnixTimeSeconds(BitConverter.ToUInt32(convertedSourceTime[0..4]));
 
             device.Temperature = byte.Parse(source[14..16], NumberStyles.HexNumber);
 
