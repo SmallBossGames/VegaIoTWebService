@@ -205,6 +205,7 @@ namespace VegaIoTApi.AppServices
         public async Task<LinkedList<VegaImpulsDeviceData>> GetImpulsDeviceDataAsync
             (string eui, long deviceId, DateTimeOffset from, CancellationToken cancellationToken = default)
         {
+            var unixTime = from.ToUnixTimeMilliseconds();
             // ��������, ����� �������� ���� � ������ ������� ��� ������ �������� ������
             var request = new DeviceDataReq()
             {
@@ -212,7 +213,7 @@ namespace VegaIoTApi.AppServices
                 Select = new DeviceDataReq.SelectModel()
                 {
                     Direction = "UPLINK", // ��������� �� ��� ������� ��-11
-                    DateFrom = from.ToUnixTimeMilliseconds(),
+                    DateFrom = unixTime < 0 ? 0 : unixTime,
                 }
             };
 
@@ -223,9 +224,15 @@ namespace VegaIoTApi.AppServices
 
             foreach (var a in result.DataList)
             {
-                var processed = VegaImpulsDeviceData.Parse(a.Data);
-                processed.DeviceId = deviceId;
-                list.AddLast(processed);
+                if (a.Type == "UNCONF_UP" && a.Data.Length >= 48 && a.Data[0] == '0' && a.Data[1] == '1')
+                {
+                    var processed = VegaImpulsDeviceData.Parse(a.Data);
+                    if (processed.Uptime > from)
+                    {
+                        processed.DeviceId = deviceId;
+                        list.AddLast(processed);
+                    }
+                }
             }
 
             return list;

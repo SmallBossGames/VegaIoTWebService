@@ -24,7 +24,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
 
         // GET: api/VegaTempDeviceDatas
         [HttpGet("all")]
-        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetAllAsync()
+        public async Task<IEnumerable<VegaTempDeviceData>> GetAllAsync()
         {
             return await _repository.GetAllAsync().ConfigureAwait(false);
         }
@@ -49,7 +49,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
             if (result == null)
                 return NotFound();
 
-            return result;
+            return Ok(result);
         }
 
         // GET: api/VegaTempDeviceDatas/5
@@ -65,7 +65,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         }
 
         [HttpGet("current")]
-        public async Task<ActionResult<IEnumerable<VegaTempDeviceData>>> GetCurrentAsync()
+        public async Task<IEnumerable<VegaTempDeviceData>> GetCurrentAsync()
         {
             return await _repository.GetCurrentAsync().ConfigureAwait(false);
         }
@@ -74,7 +74,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         public async Task<ActionResult<VegaTempDeviceData>> GetAsync(long id)
         {
             var vegaTempDeviceData = await _repository
-                .GetDataAsync(id)
+                .GetAsync(id)
                 .ConfigureAwait(false);
 
             if (vegaTempDeviceData == null)
@@ -94,16 +94,16 @@ namespace VegaIoTApi.Controllers.v001.Temperature
                 throw new ArgumentNullException(nameof(tempDeviceData));
             }
 
-            if (id != tempDeviceData.Id || !_repository.TempDeviceExists(tempDeviceData.DeviceId))
+            if (id != tempDeviceData.Id || !_repository.ImpulsDeviceDataExists(tempDeviceData.DeviceId))
                 return BadRequest();
 
             try
             {
-                await _repository.EditTempDeviceDataAsync(tempDeviceData).ConfigureAwait(false);
+                await _repository.EditAsync(tempDeviceData).ConfigureAwait(false);
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_repository.TempDeviceDataExists(id))
+                if (!_repository.ImpulsDeviceDataExists(id))
                     return NotFound();
                 else throw;
             }
@@ -122,10 +122,10 @@ namespace VegaIoTApi.Controllers.v001.Temperature
                 throw new ArgumentNullException(nameof(tempDeviceData));
             }
 
-            if (!_repository.TempDeviceExists(tempDeviceData.DeviceId))
+            if (!_repository.DeviceExists(tempDeviceData.DeviceId))
                 return BadRequest();
 
-            await _repository.AddTempDeviceDataAsync(tempDeviceData).ConfigureAwait(false);
+            await _repository.AddAsync(tempDeviceData).ConfigureAwait(false);
 
             return CreatedAtAction("GetTempDeviceData", new { id = tempDeviceData.Id }, tempDeviceData);
         }
@@ -134,7 +134,7 @@ namespace VegaIoTApi.Controllers.v001.Temperature
         [HttpDelete("{id}")]
         public async Task<ActionResult<VegaTempDeviceData>> DeleteVegaTempDeviceData(long id)
         {
-            var result = await _repository.DeleteVegaTempDeviceData(id).ConfigureAwait(false);
+            var result = await _repository.DeleteAsync(id).ConfigureAwait(false);
 
             if (result == null)
                 return NotFound();
