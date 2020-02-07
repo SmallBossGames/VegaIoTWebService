@@ -37,6 +37,7 @@ namespace VegaIoTApi
             services.AddScoped<IDeviceRepository, DeviceRepository>();
             services.AddScoped<ITemperatureDeviceDataRepository, TemperatureDeviceDataRepository>();
             services.AddScoped<IMovingDeviceDataRepository, MovingDeviceDataRepository>();
+            services.AddScoped<IImpulsDeviceDataRepository, ImpulsDeviceDataRepository>();
             return services;
         }
 

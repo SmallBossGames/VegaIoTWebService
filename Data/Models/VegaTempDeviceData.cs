@@ -1,10 +1,11 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using VegaIoTApi.Data.Models.Interfaces;
 
 namespace VegaIoTWebService.Data.Models
 {
-    public class VegaTempDeviceData // датчик температуры
+    public class VegaTempDeviceData : IDeviceData // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     {
         public long Id { get; set; }
         public VegaDevice? Device { get; set; }

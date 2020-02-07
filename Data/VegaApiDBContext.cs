@@ -17,7 +17,7 @@ namespace VegaIoTApi.Data
         public DbSet<VegaDevice> TempDevices { get; set; } = null!;
         public DbSet<VegaTempDeviceData> TempDeviceData { get; set; } = null!;
         //public DbSet<VegaMagnetDeviceData> MagnetDeviceDatas { get; set; } = null!;
-        //public DbSet<VegaImpulsDeviceData> ImpulsDeviceDatas { get; set; } = null!;
+        public DbSet<VegaImpulsDeviceData> ImpulsDeviceDatas { get; set; } = null!;
         public DbSet<VegaMoveDeviceData> MoveDeviceDatas { get; set; } = null!;
 
 

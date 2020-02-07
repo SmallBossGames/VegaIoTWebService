@@ -54,6 +54,9 @@ namespace VegaIoTWebService.HostedServices
             var moveDataRepository = scope.ServiceProvider
                 .GetRequiredService<IMovingDeviceDataRepository>();
 
+            var impulsDataRepository = scope.ServiceProvider
+                .GetRequiredService<IImpulsDeviceDataRepository>();
+
             var devices = await deviceRepository
                 .GetDevicesAsync(_cancellationToken)
                 .ConfigureAwait(false);
@@ -68,6 +71,9 @@ namespace VegaIoTWebService.HostedServices
                     case DeviceType.Move:
                         await UpdateMoveDataAsync(moveDataRepository, item).ConfigureAwait(false);
                         break;
+                    case DeviceType.Counter:
+                        await UpdateImpulsDataAsync(impulsDataRepository, item).ConfigureAwait(false);
+                        break;
                     default:
                         break;
                 };
@@ -77,7 +83,7 @@ namespace VegaIoTWebService.HostedServices
         private async Task UpdateTemperatureDataAsync(ITemperatureDeviceDataRepository repository, VegaDevice device)
         {
             var lastUpdateTime = await repository
-                .GetLastUpdateTime(device.Id, _cancellationToken)
+                .GetUptimeAsync(device.Id, _cancellationToken)
                 .ConfigureAwait(false);
 
             var vegaServerLoadedData = await communicator
@@ -85,7 +91,7 @@ namespace VegaIoTWebService.HostedServices
                 .ConfigureAwait(false);
 
             await repository
-                .AddTempDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                .AddAsync(vegaServerLoadedData, _cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -101,6 +107,21 @@ namespace VegaIoTWebService.HostedServices
 
             await repository
                 .AddVegaMovingDeviceDataAsync(vegaServerLoadedData, _cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        private async Task UpdateImpulsDataAsync(IImpulsDeviceDataRepository repository, VegaDevice device)
+        {
+            var lastUpdateTime = await repository
+                 .GetUptimeAsync(device.Id, _cancellationToken)
+                 .ConfigureAwait(false);
+
+            var vegaServerLoadedData = await communicator
+                .GetImpulsDeviceDataAsync(device.Eui, device.Id, lastUpdateTime, _cancellationToken)
+                .ConfigureAwait(false);
+
+            await repository
+                .AddAsync(vegaServerLoadedData, _cancellationToken)
                 .ConfigureAwait(false);
         }
 

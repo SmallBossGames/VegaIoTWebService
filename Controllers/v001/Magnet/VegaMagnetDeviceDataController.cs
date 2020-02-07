@@ -45,7 +45,7 @@ namespace VegaIoTApi.Controllers.v001.Magnet
         }
 
         [HttpGet("current")]
-        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetCurrentAsync() 
+        public async Task<ActionResult<IEnumerable<VegaMagnetDeviceData>>> GetCurrentAsync()
             => await _repository.GetCurrentAsync().ConfigureAwait(false);
 
         [HttpGet("{id}")]
@@ -66,9 +66,8 @@ namespace VegaIoTApi.Controllers.v001.Magnet
                 throw new ArgumentNullException(nameof(vegaMagnetDeviceData));
             }
 
-            if (id != vegaMagnetDeviceData.Id || !_repository.MagnetDeviceExists(vegaMagnetDeviceData.Id)) 
+            if (id != vegaMagnetDeviceData.Id || !_repository.MagnetDeviceExists(vegaMagnetDeviceData.Id))
                 return BadRequest();
-            
 
             try
             {
