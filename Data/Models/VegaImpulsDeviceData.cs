@@ -17,10 +17,10 @@ namespace VegaIoTWebService.Data.Models
         public byte AlarmExit { get; set; } // в случае тревоги передаётся другой тип пакета
         public DateTimeOffset UpTime { get; set; }
         public double Temperature { get; set; } // температура приходит без умножения на 10 по докам, как на самом деле не знаю
-        public short InputState_1 { get; set; }
-        public short InputState_2 { get; set; }
-        public short InputState_3 { get; set; }
-        public short InputState_4 { get; set; }
+        public int InputState1 { get; set; }
+        public int InputState2 { get; set; }
+        public int InputState3 { get; set; }
+        public int InputState4 { get; set; }
 
         public static VegaImpulsDeviceData Parse(string source)
         {
@@ -48,19 +48,19 @@ namespace VegaIoTWebService.Data.Models
 
             Span<byte> convertedInputState_1 = stackalloc byte[4];
             convertedInputState_1 = Utilits.ConvertHexString(convertedInputState_1, source[16..24]);
-            device.InputState_1 = BitConverter.ToInt16(convertedInputState_1[0..4]);
+            device.InputState1 = BitConverter.ToInt32(convertedInputState_1[0..4]);
 
             Span<byte> convertedInputState_2 = stackalloc byte[4];
             convertedInputState_2 = Utilits.ConvertHexString(convertedInputState_2, source[24..32]);
-            device.InputState_2 = BitConverter.ToInt16(convertedInputState_2[0..4]);
+            device.InputState2 = BitConverter.ToInt32(convertedInputState_2[0..4]);
 
             Span<byte> convertedInputState_3 = stackalloc byte[4];
             convertedInputState_3 = Utilits.ConvertHexString(convertedInputState_3, source[32..40]);
-            device.InputState_3 = BitConverter.ToInt16(convertedInputState_3[0..4]);
+            device.InputState3 = BitConverter.ToInt32(convertedInputState_3[0..4]);
 
             Span<byte> convertedInputState_4 = stackalloc byte[4];
             convertedInputState_4 = Utilits.ConvertHexString(convertedInputState_4, source[40..48]);
-            device.InputState_4 = BitConverter.ToInt16(convertedInputState_4[0..4]);
+            device.InputState4 = BitConverter.ToInt32(convertedInputState_4[0..4]);
 
             return device;
         }
