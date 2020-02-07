@@ -15,7 +15,7 @@ namespace VegaIoTApi.Controllers.v001.Impuls
     {
         readonly IImpulsDeviceDataRepository _repository;
 
-        public VegaImpulsDeviceDataController(IImpulsDeviceDataRepository repository) 
+        public VegaImpulsDeviceDataController(IImpulsDeviceDataRepository repository)
         {
             _repository = repository;
         }
@@ -37,8 +37,8 @@ namespace VegaIoTApi.Controllers.v001.Impuls
 
         [HttpGet("current/{deviceId}")]
         public async Task<IEnumerable<VegaImpulsDeviceData>> GetCurrentAsync()
-            =>   await _repository.GetCurrentAsync().ConfigureAwait(false);
-        
+            => await _repository.GetCurrentAsync().ConfigureAwait(false);
+
         [HttpGet("{id}")]
         public async Task<ActionResult<VegaImpulsDeviceData>> GetAsync(long id)
         {
