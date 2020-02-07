@@ -17,10 +17,10 @@ namespace VegaIoTWebService.Data.Models
         public byte AlarmExit { get; set; } // в случае тревоги передаётся другой тип пакета
         public DateTimeOffset UpTime { get; set; }
         public double Temperature { get; set; } // температура приходит без умножения на 10 по докам, как на самом деле не знаю
-        public int InputState1 { get; set; }
-        public int InputState2 { get; set; }
-        public int InputState3 { get; set; }
-        public int InputState4 { get; set; }
+        public long InputState1 { get; set; }
+        public long InputState2 { get; set; }
+        public long InputState3 { get; set; }
+        public long InputState4 { get; set; }
 
         public static VegaImpulsDeviceData Parse(string source)
         {
