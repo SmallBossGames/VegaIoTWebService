@@ -44,9 +44,9 @@ namespace VegaIoTApi.Controllers.v001.Impuls
 
             if (result == null) return NotFound();
 
-            VegaImpulsDeviceData[] modifiedData = new VegaImpulsDeviceData[result.Count()];
+            VegaImpulsDeviceData[] modifiedData = new VegaImpulsDeviceData[result.Count() - 1];
 
-            for (int i = 1; i < result.Count(); i++)
+            for (int i = 1; i < result.Count() - 1; i++)
             {
                 modifiedData[i - 1] = new VegaImpulsDeviceData();
                 modifiedData[i - 1].Id = result.ElementAt(i).Id;
@@ -60,7 +60,7 @@ namespace VegaIoTApi.Controllers.v001.Impuls
                 modifiedData[i - 1].Temperature = result.ElementAt(i).Temperature;
                 modifiedData[i - 1].InputState1 = result.ElementAt(i).InputState1;
                 modifiedData[i - 1].InputState2 = result.ElementAt(i).InputState2;
-                modifiedData[i - 1].InputState3 = result.ElementAt(i-1).InputState3 - result.ElementAt(i).InputState3;
+                modifiedData[i - 1].InputState3 = result.ElementAt(i - 1).InputState3 - result.ElementAt(i).InputState3;
                 modifiedData[i - 1].InputState4 = result.ElementAt(i).InputState4;
             }
 
