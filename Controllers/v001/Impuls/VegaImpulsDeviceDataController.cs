@@ -36,15 +36,35 @@ namespace VegaIoTApi.Controllers.v001.Impuls
         }
 
         [HttpGet("all/delta/{deviceId}")]
-        public async Task<ActionResult<IEnumerable<VegaImpulsDeviceData>>> GetAllDeltaAsync(long deviceId)
+        public async Task<ActionResult<IEnumerable<VegaImpulsDeviceData>>> GetAllDeltaAsync(long deviceId, [FromQuery]int days)
         {
             var result = await _repository
-                .GetAllAsync(deviceId, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(-1))
+                .GetAllAsync(deviceId, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(-days))
                 .ConfigureAwait(false);
 
             if (result == null) return NotFound();
 
-            return Ok(result);
+            VegaImpulsDeviceData[] modifiedData = new VegaImpulsDeviceData[result.Count()];
+
+            for (int i = 1; i < result.Count(); i++)
+            {
+                modifiedData[i - 1] = new VegaImpulsDeviceData();
+                modifiedData[i - 1].Id = result.ElementAt(i).Id;
+                modifiedData[i - 1].Device = result.ElementAt(i).Device;
+                modifiedData[i - 1].DeviceId = result.ElementAt(i).DeviceId;
+                modifiedData[i - 1].PackageType = result.ElementAt(i).PackageType;
+                modifiedData[i - 1].BatteryLevel = result.ElementAt(i).BatteryLevel;
+                modifiedData[i - 1].MainSettings = result.ElementAt(i).MainSettings;
+                modifiedData[i - 1].AlarmExit = result.ElementAt(i).AlarmExit;
+                modifiedData[i - 1].Uptime = result.ElementAt(i).Uptime;
+                modifiedData[i - 1].Temperature = result.ElementAt(i).Temperature;
+                modifiedData[i - 1].InputState1 = result.ElementAt(i).InputState1;
+                modifiedData[i - 1].InputState2 = result.ElementAt(i).InputState2;
+                modifiedData[i - 1].InputState3 = result.ElementAt(i-1).InputState3 - result.ElementAt(i).InputState3;
+                modifiedData[i - 1].InputState4 = result.ElementAt(i).InputState4;
+            }
+
+            return Ok(modifiedData);
         }
 
         [HttpGet("current/{deviceId}")]
