@@ -17,6 +17,7 @@ namespace VegaIoTApi.Repositories.Interfaces
         Task<IEnumerable<TDeviceData>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<IEnumerable<TDeviceData>?> GetAllAsync(long deviceId, CancellationToken cancellationToken = default);
         Task<IEnumerable<TDeviceData>?> GetAllAsync(long deviceId, int startIndex, int limit, CancellationToken cancellationToken = default);
+        Task<IEnumerable<TDeviceData>?> GetAllAsync(long deviceId, DateTimeOffset startTime, DateTimeOffset endTime, CancellationToken cancellationToken = default);
         Task<IEnumerable<TDeviceData>> GetCurrentAsync(CancellationToken cancellationToken = default);
         Task<TDeviceData> GetCurrentAsync(long deviceId, CancellationToken cancellationToken = default);
         Task<DateTimeOffset> GetUptimeAsync(long deviceId, CancellationToken cancellationToken = default);

@@ -15,24 +15,24 @@ namespace VegaIoTApi.Repositories
     public class DeviceDataRepositoryBase<T> : IDeviceDataRepository<T> where T: class, IDeviceData
     {
         private readonly DbSet<T> _dataSet;
-        private VegaApiDBContext _context;
+        protected VegaApiDBContext Сontext { get; }
 
         protected DeviceDataRepositoryBase(DbSet<T> dataSet, VegaApiDBContext context)
         {
             _dataSet = dataSet ?? throw new ArgumentNullException(nameof(dataSet));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            Сontext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddAsync(IEnumerable<T> impulsDeviceData, CancellationToken cancellationToken = default)
         {
             await _dataSet.AddRangeAsync(impulsDeviceData, cancellationToken).ConfigureAwait(false);
-            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await Сontext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<T> AddAsync(T impulsDeviceData, CancellationToken cancellationToken = default)
         {
             _dataSet.Add(impulsDeviceData);
-            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            await Сontext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             return impulsDeviceData;
         }
 
@@ -46,7 +46,7 @@ namespace VegaIoTApi.Repositories
 
             _dataSet.Remove(deviceData);
 
-            await _context
+            await Сontext
                 .SaveChangesAsync(cancellationToken)
                 .ConfigureAwait(false);
 
@@ -55,13 +55,13 @@ namespace VegaIoTApi.Repositories
 
         public bool DeviceExists(long deviceId)
         {
-            return _context.TempDevices.Any(e => e.Id == deviceId);
+            return Сontext.TempDevices.Any(e => e.Id == deviceId);
         }
 
         public async Task EditAsync(T vegaImpulsDeviceData, CancellationToken cancellationToken = default)
         {
-            _context.Entry(vegaImpulsDeviceData).State = EntityState.Modified;
-            await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            Сontext.Entry(vegaImpulsDeviceData).State = EntityState.Modified;
+            await Сontext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -106,6 +106,29 @@ namespace VegaIoTApi.Repositories
                 .Skip(startIndex)
                 .Take(limit)
                 .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<IEnumerable<T>?> GetAllAsync(long deviceId, DateTimeOffset startTime, DateTimeOffset endTime, CancellationToken cancellationToken = default)
+        {
+            if (!DeviceExists(deviceId))
+            {
+                return null;
+            }
+
+            if(startTime < endTime)
+            {
+                (startTime, endTime) = (endTime, startTime);
+            }
+
+            var query = from data in _dataSet
+                        where data.DeviceId == deviceId && data.Uptime >= startTime && data.Uptime <= endTime
+                        orderby data.Uptime descending
+                        select data;
+
+            return await query
+                .AsNoTracking()
+                .ToArrayAsync()
                 .ConfigureAwait(false);
         }
 
