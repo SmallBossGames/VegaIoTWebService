@@ -122,7 +122,7 @@ namespace VegaIoTApi.Repositories
             }
 
             var query = from data in _dataSet
-                        where data.DeviceId == deviceId && data.Uptime >= startTime && data.Uptime <= endTime
+                        where data.DeviceId == deviceId && data.Uptime <= startTime && data.Uptime >= endTime
                         orderby data.Uptime descending
                         select data;
 

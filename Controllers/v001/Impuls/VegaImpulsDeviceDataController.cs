@@ -38,7 +38,9 @@ namespace VegaIoTApi.Controllers.v001.Impuls
         [HttpGet("all/delta/{deviceId}")]
         public async Task<ActionResult<IEnumerable<VegaImpulsDeviceData>>> GetAllDeltaAsync(long deviceId)
         {
-            var result = await _repository.GetAllAsync(deviceId, DateTimeOffset.Now.AddDays(-1), DateTimeOffset.Now).ConfigureAwait(false);
+            var result = await _repository
+                .GetAllAsync(deviceId, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(-1))
+                .ConfigureAwait(false);
 
             if (result == null) return NotFound();
 
