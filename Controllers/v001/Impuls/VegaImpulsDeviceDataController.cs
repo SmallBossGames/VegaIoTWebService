@@ -46,7 +46,7 @@ namespace VegaIoTApi.Controllers.v001.Impuls
 
             VegaImpulsDeviceData[] modifiedData = new VegaImpulsDeviceData[result.Count() - 1];
 
-            for (int i = 1; i < result.Count() - 1; i++)
+            for (int i = 1; i < result.Count(); i++)
             {
                 modifiedData[i - 1] = new VegaImpulsDeviceData();
                 modifiedData[i - 1].Id = result.ElementAt(i).Id;
